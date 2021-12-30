@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_sync">
+
+    <fragment
+        android:id="@+id/navigation_sync"
+        android:name="bruno.p.pereira.gpsindoorf.ui.sync.SyncFragment"
+        android:label="@string/title_sync"
+        tools:layout="@layout/fragment_sync" />
+
+    <fragment
+        android:id="@+id/navigation_database"
+        android:name="bruno.p.pereira.gpsindoorf.ui.beacons.BeaconsFragment"
+        android:label="@string/title_database"
+        tools:layout="@layout/fragment_beacons" />
+
+    <fragment
+        android:id="@+id/navigation_info"
+        android:name="bruno.p.pereira.gpsindoorf.ui.info.InfoFragment"
+        android:label="@string/title_info"
+        tools:layout="@layout/fragment_info" />
+    <fragment
+        android:id="@+id/navigation_details"
+        android:name="bruno.p.pereira.gpsindoorf.ui.details.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" />
+</navigation>
