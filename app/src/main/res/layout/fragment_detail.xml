@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="400dp">
+    android:layout_height="400dp"
+    >
 
 
     <TextView
@@ -80,7 +81,7 @@
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginStart="48dp"
-        android:text="@string/rssin_placeHolderDetails"
+        android:text="@string/rssi_placeHolderDetails"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@+id/tvItemMac"
         app:layout_constraintStart_toEndOf="@+id/tvItemMac"

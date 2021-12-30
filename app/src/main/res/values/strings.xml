@@ -9,5 +9,6 @@
     <string name="id_placeHolderDetails">ID:</string>
     <string name="name_placeHolderDetails">Name:</string>
     <string name="mac_placeHolderDetails">MAC:</string>
-    <string name="rssin_placeHolderDetails">RSSI:</string>
+    <string name="rssi_placeHolderDetails">RSSI:</string>
+    <string name="contextDescriptionFloatingButton">to_sync_data</string>
 </resources>
