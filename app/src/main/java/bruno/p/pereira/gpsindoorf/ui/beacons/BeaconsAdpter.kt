@@ -14,6 +14,7 @@ import bruno.p.pereira.gpsindoorf.R
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.enums.BundleEnum
 import bruno.p.pereira.gpsindoorf.models.Beacon
+import bruno.p.pereira.gpsindoorf.ui.sync.LIST_ITEMS
 
 
 const val LIST_DATABASE= "LIST_DATABASE"
@@ -38,17 +39,19 @@ class BeaconsAdpter(private val db: SQLiteHelper) : RecyclerView.Adapter<Beacons
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val currentBeacon = this.listBeacons[position]
-        val id = currentBeacon.id
-        val name = currentBeacon.name
-        " ID: $id".also { holder.idDevice.text = it }
-        "NAME: $name".also { holder.nameDevice.text = it }
+
+
+        holder.idBeacon.text = currentBeacon.id.toString()
+        holder.nameBeacon.text = currentBeacon.mac
+        holder.macBeacon.text = currentBeacon.mac
+        holder.rssiBeacon.text = currentBeacon.rssi.toString()
 
 
         holder.itemView.setOnClickListener {
 
             val bundle: Bundle = bundleOf(
-                BundleEnum.BEACON_ID.name to id,
-                BundleEnum.BEACON_NAME.name to name,
+                BundleEnum.BEACON_ID.name to currentBeacon.id,
+                BundleEnum.BEACON_NAME.name to currentBeacon.name,
                 BundleEnum.BEACON_MAC.name to currentBeacon.mac,
                 BundleEnum.BEACON_RSSI.name to currentBeacon.rssi,
                 BundleEnum.ORIGIN.name to LIST_DATABASE
@@ -64,8 +67,10 @@ class BeaconsAdpter(private val db: SQLiteHelper) : RecyclerView.Adapter<Beacons
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var idDevice: TextView = itemView.findViewById(R.id.tvItemId)
-        var nameDevice: TextView = itemView.findViewById(R.id.tvItemName)
+        var idBeacon: TextView = itemView.findViewById(R.id.tvItemId)
+        var nameBeacon: TextView = itemView.findViewById(R.id.tvItemName)
+        var macBeacon: TextView = itemView.findViewById(R.id.tvItemMac)
+        var rssiBeacon: TextView = itemView.findViewById(R.id.tvItemRssi)
 
 
     }

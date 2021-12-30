@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
 import bruno.p.pereira.gpsindoorf.R
+import bruno.p.pereira.gpsindoorf.databinding.FragmentDetailBinding
 import bruno.p.pereira.gpsindoorf.databinding.LayoutDetailItemBinding
 import bruno.p.pereira.gpsindoorf.enums.BundleEnum
 import bruno.p.pereira.gpsindoorf.models.Beacon
@@ -24,7 +25,7 @@ class DetailFragment : Fragment() {
 
     private lateinit var _data: Beacon
     private var _origin: String? = null
-    private var _binding: LayoutDetailItemBinding? = null
+    private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
 
 
@@ -48,11 +49,14 @@ class DetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = LayoutDetailItemBinding.inflate(inflater, container, false)
+        _binding = FragmentDetailBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         binding.tvItemId.text = _data.id.toString()
         binding.tvItemName.text = _data.name
+        binding.tvItemMac.text = _data.mac
+        binding.tvItemRssi.text = _data.rssi.toString()
+
         root.setOnClickListener {
             if (_origin == LIST_DATABASE) {
                 Navigation.findNavController(root).navigate(R.id.navigation_database)
@@ -66,8 +70,11 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+    }
 
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

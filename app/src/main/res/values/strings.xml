@@ -6,4 +6,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="info_title">Device Info</string>
+    <string name="id_placeHolderDetails">ID:</string>
+    <string name="name_placeHolderDetails">Name:</string>
+    <string name="mac_placeHolderDetails">MAC:</string>
+    <string name="rssin_placeHolderDetails">RSSI:</string>
 </resources>

@@ -19,79 +19,82 @@ const val LIST_ITEMS = "LIST_ITEMS"
 
 
 class SyncAdpter(private val _db: SQLiteHelper, beaconViewModel: SyncViewModel) :
-        RecyclerView.Adapter<SyncAdpter.ViewHolder>() {
+    RecyclerView.Adapter<SyncAdpter.ViewHolder>() {
 
 
-        private val listBeacons = beaconViewModel.getBeacons()
+    private val listBeacons = beaconViewModel.getBeacons()
 
 
-        fun notifyChanges(beacon: Beacon?) {
-            if (beacon == null) {
-                notifyDataSetChanged()
-                idGlobal= 0;
-            }else {
-                if (_db.getFirstBeaconbyId(beacon.mac) == null) {
-                    this._db.insertStudent(beacon)
-                }
-                notifyDataSetChanged()
+    fun notifyChanges(beacon: Beacon?) {
+        if (beacon == null) {
+            notifyDataSetChanged()
+            idGlobal = 0;
+        } else {
+            if (_db.getFirstBeaconbyId(beacon.mac) == null) {
+                this._db.insertStudent(beacon)
             }
-
+            notifyDataSetChanged()
         }
+    }
 
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
-            return ViewHolder(
-                LayoutInflater.from(parent.context).inflate(
-                    R.layout.layout_detail_item,
-                    parent,
-                    false
-                )
+        return ViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.layout_detail_item,
+                parent,
+                false
             )
+        )
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val currentBeacon = this.listBeacons[position]
+
+        holder.idBeacon.text = currentBeacon.id.toString()
+        holder.nameBeacon.text = currentBeacon.mac
+        holder.macBeacon.text = currentBeacon.mac
+        holder.rssiBeacon.text = currentBeacon.rssi.toString()
+
+
+
+        holder.itemView.setOnClickListener {
+            if (BleManager.getInstance().scanSate == BleScanState.STATE_SCANNING)
+                BleManager.getInstance().cancelScan()
+
+            val bundle: Bundle = bundleOf(
+                BundleEnum.BEACON_ID.name to currentBeacon.id,
+                BundleEnum.BEACON_NAME.name to currentBeacon.name,
+                BundleEnum.BEACON_MAC.name to currentBeacon.mac,
+                BundleEnum.BEACON_RSSI.name to currentBeacon.rssi,
+                BundleEnum.ORIGIN.name to LIST_ITEMS
+            )
+            Navigation.findNavController(holder.itemView)
+                .navigate(R.id.navigation_details, bundle)
+        }
+    }
+
+    override fun getItemCount(): Int = this.listBeacons.size
+
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        var idBeacon: TextView = itemView.findViewById(R.id.tvItemId)
+        var nameBeacon: TextView = itemView.findViewById(R.id.tvItemName)
+        var macBeacon: TextView = itemView.findViewById(R.id.tvItemMac)
+        var rssiBeacon: TextView = itemView.findViewById(R.id.tvItemRssi)
+
+    }
+
+    companion object {
+        private var idGlobal = 0
+
+        fun getId(): Int {
+            return idGlobal++
         }
 
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val currentBeacon = this.listBeacons[position]
-            val id = currentBeacon.id
-            val name = currentBeacon.name
-            " ID: $id".also { holder.idDevice.text = it }
-            "NAME: $name".also { holder.nameDevice.text = it }
 
-
-            holder.itemView.setOnClickListener {
-                if (BleManager.getInstance().scanSate == BleScanState.STATE_SCANNING)
-                    BleManager.getInstance().cancelScan()
-
-                val bundle: Bundle = bundleOf(
-                    BundleEnum.BEACON_ID.name to id,
-                    BundleEnum.BEACON_NAME.name to name,
-                    BundleEnum.BEACON_MAC.name to currentBeacon.mac,
-                    BundleEnum.BEACON_RSSI.name to currentBeacon.rssi,
-                    BundleEnum.ORIGIN.name to LIST_ITEMS
-                )
-                Navigation.findNavController(holder.itemView)
-                    .navigate(R.id.navigation_details, bundle)
-            }
-        }
-
-        override fun getItemCount(): Int = this.listBeacons.size
-
-
-        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-            var idDevice: TextView = itemView.findViewById(R.id.tvItemId)
-            var nameDevice: TextView = itemView.findViewById(R.id.tvItemName)
-
-        }
-
-        companion object {
-            private var idGlobal = 0
-
-            fun getId(): Int {
-                return idGlobal++
-            }
-
-
-        }
+    }
 
 }
