@@ -27,6 +27,7 @@ import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.databinding.FragmentSyncBinding
 import bruno.p.pereira.gpsindoorf.models.Beacon
+import bruno.p.pereira.gpsindoorf.services.HttpRequest
 import com.clj.fastble.BleManager
 import com.clj.fastble.callback.BleScanCallback
 import com.clj.fastble.data.BleDevice
@@ -176,9 +177,7 @@ class SyncFragment : Fragment() {
                 Log.v(TAG, "[SCANNER]: FOUND-> NAME:${bleDevice.name} MAC: ${bleDevice.mac} ")
                 val newBeacon =
                     Beacon(SyncAdpter.getId(), bleDevice.name, bleDevice.mac, bleDevice.rssi)
-                syncViewModel.addBeacons(newBeacon)
-                Log.v(TAG, "[VIEWMODEL]: ${syncViewModel.getBeacons().size}")
-                _syncAdapt.notifyChanges(newBeacon)
+                managementBeacon(newBeacon)
             }
 
             override fun onScanFinished(scanResultList: List<BleDevice>) {
@@ -192,5 +191,12 @@ class SyncFragment : Fragment() {
         val locationManager =
             activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
+    private fun managementBeacon(beacon: Beacon){
+        syncViewModel.addBeacons(beacon)
+        Log.v(TAG, "[VIEWMODEL]: ${syncViewModel.getBeacons().size}")
+        _syncAdapt.notifyChanges(beacon)
+        HttpRequest.startActionPOST(this.requireContext(),beacon)
     }
 }

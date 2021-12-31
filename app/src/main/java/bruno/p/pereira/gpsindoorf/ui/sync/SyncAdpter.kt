@@ -14,6 +14,7 @@ import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.enums.BundleEnum
 import bruno.p.pereira.gpsindoorf.models.Beacon
+import bruno.p.pereira.gpsindoorf.services.HttpRequest
 import com.clj.fastble.BleManager
 import com.clj.fastble.data.BleScanState
 
@@ -58,7 +59,7 @@ class SyncAdpter(private val _db: SQLiteHelper, beaconViewModel: SyncViewModel) 
         val currentBeacon = this.listBeacons[position]
 
         holder.idBeacon.text = currentBeacon.id.toString()
-        holder.nameBeacon.text = currentBeacon.mac
+        holder.nameBeacon.text = currentBeacon.name
         holder.macBeacon.text = currentBeacon.mac
         holder.rssiBeacon.text = currentBeacon.rssi.toString()
 
