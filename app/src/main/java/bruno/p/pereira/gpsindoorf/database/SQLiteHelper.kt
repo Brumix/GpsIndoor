@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import bruno.p.pereira.gpsindoorf.models.Beacon
 import java.lang.Exception
-
+//comentario
 class SQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
