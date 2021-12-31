@@ -3,6 +3,7 @@ package bruno.p.pereira.gpsindoorf.ui.beacons
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import bruno.p.pereira.gpsindoorf.R
+import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.enums.BundleEnum
 import bruno.p.pereira.gpsindoorf.models.Beacon
@@ -63,6 +65,11 @@ class BeaconsAdpter(private val db: SQLiteHelper) : RecyclerView.Adapter<Beacons
     }
 
     override fun getItemCount(): Int = this.listBeacons.size
+
+    fun notify_changes() {
+        this.listBeacons = this.db.getAllBeacons()
+        notifyDataSetChanged()
+    }
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

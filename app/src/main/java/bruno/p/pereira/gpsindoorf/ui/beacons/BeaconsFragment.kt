@@ -2,6 +2,7 @@ package bruno.p.pereira.gpsindoorf.ui.beacons
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import bruno.p.pereira.gpsindoorf.R
+import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.databinding.FragmentBeaconsBinding
 import bruno.p.pereira.gpsindoorf.databinding.FragmentInfoBinding
@@ -24,12 +26,12 @@ import java.sql.Time
 
 class BeaconsFragment : Fragment() {
 
-    private val bd: SQLiteHelper by lazy {
+    private val db: SQLiteHelper by lazy {
         SQLiteHelper(this.requireContext())
     }
 
     private val _beaconAdapt: BeaconsAdpter by lazy {
-        BeaconsAdpter(bd)
+        BeaconsAdpter(db)
 
     }
 
@@ -60,17 +62,24 @@ class BeaconsFragment : Fragment() {
         val sync = binding.floatingSync
         sync.setOnClickListener {
             Toast.makeText(activity, "Syncing Information", Toast.LENGTH_LONG).show()
-            HttpRequest.startActionGET(this.requireContext(),20)
+            Log.v(TAG, "SIZE DB ${db.getAllBeacons().size}")
+
+            HttpRequest.startActionGET(this.requireContext())
             sync.animate().apply {
-                duration=2000
+                duration = 2000
                 rotationBy(360f)
             }.start()
+
+            root.postDelayed({
+                _beaconAdapt.notify_changes()
+                Log.v(TAG, "UI Updated")
+            }, 2000)
+
 
         }
 
         return root
     }
-
 
 
     override fun onDestroyView() {

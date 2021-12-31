@@ -4,7 +4,9 @@ import android.app.IntentService
 import android.content.Intent
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import bruno.p.pereira.gpsindoorf.TAG
+import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.models.Beacon
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.Request
@@ -25,6 +27,10 @@ private const val EXTRA_PARAM2 = "bruno.p.pereira.gpsindoorf.services.extra.PARA
 
 
 class HttpRequest : IntentService("HttpRequest") {
+
+    private val db: SQLiteHelper by lazy {
+        SQLiteHelper(this)
+    }
 
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
@@ -47,7 +53,7 @@ class HttpRequest : IntentService("HttpRequest") {
         if (param1 != -1)
             url = "$url/$param1"
 
-        Log.v(TAG,"[URL] $url")
+        Log.v(TAG, "[URL] $url")
         val queue = SingletonVolleyRequestQueue.getInstance(this.applicationContext).requestQueue
         // Create Request with Listeners:
         // GET METHOD
@@ -55,27 +61,47 @@ class HttpRequest : IntentService("HttpRequest") {
             Request.Method.GET, url,
             { //Handle Response
                     response ->
-                getResponseGEt(response,param1)
+                getResponseGEt(response, param1)
             },
             { //Handle Error
                     error ->
+
+                Toast.makeText(this, "ERROR : ENDPOINT NOT FOUND", Toast.LENGTH_LONG).show()
                 Log.e(TAG, "launchAsyncVolleyHttpRequest(): Response.Listener Error=$error")
             }
         )
         queue.add(request)
     }
 
-    private fun getResponseGEt(resp: String, id:Int) {
-        Log.v(TAG, resp)
+    private fun getResponseGEt(resp: String, id: Int) {
         val gson = Gson()
-        if (id != -1) {
-          val  info : Beacon = gson.fromJson(resp, Beacon::class.java)
-            Log.v(TAG, "> From JSON String:  $info")
-        }else{
+        val listBeacons: MutableList<Beacon> = this.db.getAllBeacons()
+        val mapDB = mutableMapOf<String, Beacon>()
+        for (i in listBeacons)
+            mapDB[i.mac] = i
 
-            val arrayTutorialType = object : TypeToken<Array<Beacon>>() {}.type
-            val info: Array<Beacon> = gson.fromJson(resp, arrayTutorialType)
-            Log.v(TAG, "> From JSON String:  ${info[2]}")
+
+        if (id != -1) {
+
+            val info: Beacon = gson.fromJson(resp, Beacon::class.java)
+            if (info.mac != null) {
+                if (mapDB.containsKey(info.mac))
+                    return
+                info.id = db.getAllBeacons().size + 1
+                db.insertStudent(info)
+                Log.v(TAG, "[HTTPREQUEST] BEACON ADDED $info")
+            }
+        } else {
+            val info: Array<Beacon> =
+                gson.fromJson(resp, object : TypeToken<Array<Beacon>>() {}.type)
+
+            for (i in info) {
+                if (!mapDB.containsKey(i.mac)) {
+                    i.id = db.getAllBeacons().size + 1
+                    db.insertStudent(i)
+                    Log.v(TAG, "[HTTPREQUEST] BEACON ADDED $i")
+                }
+            }
         }
 
     }
