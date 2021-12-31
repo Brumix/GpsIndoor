@@ -23,7 +23,7 @@ class SyncViewModel : ViewModel() {
 
         }
         _beacons.add(b)
-        Log.v(TAG, "[VIEWMODEL] new Beacon added")
+        Log.v(TAG, "[VIEWMODEL] new Beacon added ${b.id}")
     }
 
     fun clearAllBeacons() = viewModelScope.launch(Dispatchers.IO) {

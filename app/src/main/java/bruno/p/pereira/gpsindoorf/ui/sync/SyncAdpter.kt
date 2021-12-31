@@ -1,6 +1,7 @@
 package bruno.p.pereira.gpsindoorf.ui.sync
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import bruno.p.pereira.gpsindoorf.R
+import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.enums.BundleEnum
 import bruno.p.pereira.gpsindoorf.models.Beacon
@@ -27,11 +29,14 @@ class SyncAdpter(private val _db: SQLiteHelper, beaconViewModel: SyncViewModel) 
 
     fun notifyChanges(beacon: Beacon?) {
         if (beacon == null) {
-            notifyDataSetChanged()
             idGlobal = 0;
+            notifyDataSetChanged()
         } else {
             if (_db.getFirstBeaconbyId(beacon.mac) == null) {
+                val oldId = beacon.id
+                beacon.id = _db.getAllBeacons().size + 1
                 this._db.insertStudent(beacon)
+                beacon.id = oldId
             }
             notifyDataSetChanged()
         }
@@ -56,7 +61,6 @@ class SyncAdpter(private val _db: SQLiteHelper, beaconViewModel: SyncViewModel) 
         holder.nameBeacon.text = currentBeacon.mac
         holder.macBeacon.text = currentBeacon.mac
         holder.rssiBeacon.text = currentBeacon.rssi.toString()
-
 
 
         holder.itemView.setOnClickListener {
