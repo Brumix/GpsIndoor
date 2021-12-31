@@ -62,7 +62,6 @@ class BeaconsFragment : Fragment() {
         val sync = binding.floatingSync
         sync.setOnClickListener {
             Toast.makeText(activity, "Syncing Information", Toast.LENGTH_LONG).show()
-            Log.v(TAG, "SIZE DB ${db.getAllBeacons().size}")
 
             HttpRequest.startActionGET(this.requireContext())
             sync.animate().apply {
