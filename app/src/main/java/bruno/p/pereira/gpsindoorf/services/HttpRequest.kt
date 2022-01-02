@@ -18,7 +18,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 
-private const val URL = "https://94b4-188-250-33-145.ngrok.io"
+private const val URL = "https://e36d-188-250-33-145.ngrok.io"
 
 private const val ACTION_GET = "bruno.p.pereira.gpsindoorf.services.action.GET"
 private const val ACTION_POST = "bruno.p.pereira.gpsindoorf.services.action.POST"
