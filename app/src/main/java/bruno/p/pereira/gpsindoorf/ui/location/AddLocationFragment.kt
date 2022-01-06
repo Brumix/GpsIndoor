@@ -1,12 +1,10 @@
 package bruno.p.pereira.gpsindoorf.ui.location
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import bruno.p.pereira.gpsindoorf.TAG
+import androidx.fragment.app.Fragment
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.databinding.FragmentAddLocationBinding
 import bruno.p.pereira.gpsindoorf.models.Beacon
@@ -18,7 +16,7 @@ class AddLocationFragment : Fragment() {
     private var _binding: FragmentAddLocationBinding? = null
     private val binding get() = _binding!!
     private var beaconMac: String = ""
-    private lateinit var beaconLoc : Beacon
+    private lateinit var beaconLoc: Beacon
     private val db: SQLiteHelper by lazy {
         SQLiteHelper(this.requireContext())
     }
@@ -32,7 +30,6 @@ class AddLocationFragment : Fragment() {
         }
 
         beaconLoc = this.db.getFirstBeaconbyMac(this.beaconMac)!!
-        Log.v(TAG,beaconLoc.toString())
 
     }
 
@@ -44,9 +41,11 @@ class AddLocationFragment : Fragment() {
         _binding = FragmentAddLocationBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding
-
-
+        binding.btSaveLocationAL.setOnClickListener {
+            beaconLoc.setDivision(binding.etDivisionAL.text.toString())
+            beaconLoc.setLabel(binding.etLabelAl.text.toString())
+            beaconLoc.setLabel(binding.etPlaceAL.text.toString())
+        }
         return root
     }
 

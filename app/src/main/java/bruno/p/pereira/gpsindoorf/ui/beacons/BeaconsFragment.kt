@@ -1,28 +1,19 @@
 package bruno.p.pereira.gpsindoorf.ui.beacons
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
-import android.widget.Button
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import bruno.p.pereira.gpsindoorf.R
 import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.databinding.FragmentBeaconsBinding
-import bruno.p.pereira.gpsindoorf.databinding.FragmentInfoBinding
 import bruno.p.pereira.gpsindoorf.services.HttpRequest
 import com.clj.fastble.BleManager
 import com.clj.fastble.data.BleScanState
-import java.sql.Time
 
 class BeaconsFragment : Fragment() {
 
@@ -71,7 +62,7 @@ class BeaconsFragment : Fragment() {
 
             root.postDelayed({
                 _beaconAdapt.notify_changes()
-                Log.v(TAG, "UI Updated")
+                Log.v(TAG, "[BEACONSLIST] UI Updated")
             }, 2000)
 
 

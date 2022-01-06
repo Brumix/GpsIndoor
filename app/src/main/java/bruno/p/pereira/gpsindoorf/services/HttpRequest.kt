@@ -1,24 +1,23 @@
 package bruno.p.pereira.gpsindoorf.services
 
 import android.app.IntentService
-import android.content.Intent
 import android.content.Context
-import android.nfc.Tag
+import android.content.Intent
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.models.Beacon
-import com.android.volley.toolbox.StringRequest
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import org.json.JSONArray
 import org.json.JSONObject
 
 
-private const val URL = "https://01da-188-250-33-145.ngrok.io"
+private const val URL = "https://c857-188-250-33-145.ngrok.io/"
 
 private const val ACTION_GET = "bruno.p.pereira.gpsindoorf.services.action.GET"
 private const val ACTION_POST = "bruno.p.pereira.gpsindoorf.services.action.POST"
@@ -56,7 +55,7 @@ class HttpRequest : IntentService("HttpRequest") {
 
     private fun handleActionGET(param1: String) {
 
-        var url = "$URL/beacon"
+        var url = "$URL/beacon/${Build.ID}"
         if (param1 != "") {
             url = "$url/$param1"
         }
@@ -85,7 +84,7 @@ class HttpRequest : IntentService("HttpRequest") {
         if (beacon.id == -1 && beacon.rssi == -1) {
             return
         }
-        val url = "$URL/beacon"
+        val url = "$URL/beacon/${Build.ID}"
         Log.v(TAG, "[URL] $url")
 
         val queue = SingletonVolleyRequestQueue.getInstance(this.applicationContext).requestQueue
@@ -151,10 +150,10 @@ class HttpRequest : IntentService("HttpRequest") {
     companion object {
 
         @JvmStatic
-        fun startActionGET(context: Context, idBeacon: String = "") {
+        fun startActionGET(context: Context, macBeacon: String = "") {
             val intent = Intent(context, HttpRequest::class.java).apply {
                 action = ACTION_GET
-                putExtra(MACBEACON, idBeacon)
+                putExtra(MACBEACON, macBeacon)
             }
             context.startService(intent)
         }
