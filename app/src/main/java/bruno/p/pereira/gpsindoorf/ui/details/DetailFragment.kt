@@ -16,11 +16,7 @@ import com.clj.fastble.BleManager
 import com.clj.fastble.data.BleScanState
 
 
-/**
- * A simple [Fragment] subclass.
- * Use the [DetailFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class DetailFragment : Fragment() {
 
     private lateinit var _data: Beacon

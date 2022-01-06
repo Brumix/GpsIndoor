@@ -18,7 +18,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 
-private const val URL = "https://4cd9-188-250-33-145.ngrok.io"
+private const val URL = "https://01da-188-250-33-145.ngrok.io"
 
 private const val ACTION_GET = "bruno.p.pereira.gpsindoorf.services.action.GET"
 private const val ACTION_POST = "bruno.p.pereira.gpsindoorf.services.action.POST"
@@ -43,7 +43,6 @@ class HttpRequest : IntentService("HttpRequest") {
                 handleActionGET(param1)
             }
             ACTION_POST -> {
-                Log.v(TAG, "cheguei")
                 val id = intent.getIntExtra(IDBEACON, -1)
                 val name = intent.getStringExtra(NAMEBEACON)!!
                 val mac = intent.getStringExtra(MACBEACON)!!

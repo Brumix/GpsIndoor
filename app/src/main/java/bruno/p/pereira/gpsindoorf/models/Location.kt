@@ -4,13 +4,23 @@ import bruno.p.pereira.gpsindoorf.enums.LocationEnum
 
 open class Location {
 
-    private var place: LocationEnum = LocationEnum.UNKNOWN
+    private var whereIs: LocationEnum = LocationEnum.UNKNOWN
     private var label: String = ""
+    private var place: String = " "
+    private var division: String = " "
     private var long: String = ""
     private var lat: String = ""
 
-    fun getPLace(): LocationEnum {
+    fun getPWhereIs(): LocationEnum {
+        return this.whereIs
+    }
+
+    fun getPlace(): String {
         return this.place
+    }
+
+    fun getDivision(): String {
+        return this.division
     }
 
     fun getLabel(): String {
@@ -25,13 +35,16 @@ open class Location {
         return this.lat
     }
 
-    fun setPLace(local: Int) {
-        if (LocationEnum.CLOUD.ordinal == local)
-            this.place = LocationEnum.CLOUD
-        if (LocationEnum.LOCAl.ordinal == local)
-            this.place = LocationEnum.LOCAl
-        else
-            this.place = LocationEnum.UNKNOWN
+    fun setWhereIs(local: LocationEnum) {
+   this.whereIs = local
+    }
+
+    fun setPlace(place: String) {
+        this.place = place
+    }
+
+    fun setDivision(division: String) {
+        this.division = division
     }
 
     fun setLabel(label: String) {
