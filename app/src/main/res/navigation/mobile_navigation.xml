@@ -29,6 +29,6 @@
     <fragment
         android:id="@+id/navigation_add_location"
         android:name="bruno.p.pereira.gpsindoorf.ui.location.AddLocationFragment"
-        android:label="fragment_add_location"
+        android:label="@string/title_add_location"
         tools:layout="@layout/fragment_add_location" />
 </navigation>

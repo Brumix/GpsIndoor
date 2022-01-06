@@ -18,15 +18,10 @@ class SQLiteHelper(context: Context) :
         private const val DATABASE_VERSION = 1
         private const val DATABASE_NAME = "Gpsindoor.db"
         private const val TBL_BEACONS = "beacons"
-        private const val TBL_LOCATION = "location"
         private const val ID = "id"
         private const val NAME = "name"
         private const val MAC = "mac"
         private const val RSSI = "rssi"
-        private const val LONG = "long"
-        private const val LAT = "lat"
-        private const val PLACE = "place"
-        private const val LABEl = "label"
 
     }
 
@@ -37,20 +32,12 @@ class SQLiteHelper(context: Context) :
                 + MAC + " TEXT PRIMARY KEY, "
                 + RSSI + " INTEGER )")
 
-        val createTblLocation = ("CREATE TABLE " + TBL_LOCATION + "("
-                + MAC + " TEXT, "
-                + LABEl + " TEXT, "
-                + LONG + " TEXT, "
-                + LAT + " TEXT, "
-                + PLACE + " INTEGER )")
 
         db?.execSQL(createTblBeacons)
-        db?.execSQL(createTblLocation)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db!!.execSQL("DROP TABLE IF EXISTS $TBL_BEACONS")
-        db!!.execSQL("DROP TABLE IF EXISTS $TBL_LOCATION")
         onCreate(db)
     }
 
@@ -70,23 +57,6 @@ class SQLiteHelper(context: Context) :
         return success
     }
 
-    fun insertLocation(ble: Beacon): Long {
-        val db = this.writableDatabase
-
-        val contentValues = ContentValues()
-        contentValues.put(MAC, ble.mac)
-        contentValues.put(LABEl, ble.getLabel())
-        contentValues.put(LONG, ble.getLong())
-        contentValues.put(LAT, ble.getLat())
-        contentValues.put(PLACE, ble.getPLace().ordinal)
-
-
-        val success = db.insert(TBL_LOCATION, null, contentValues)
-
-        db.close()
-
-        return success
-    }
 
     @SuppressLint("Range")
     fun getAllBeacons(): ArrayList<Beacon> {
@@ -124,7 +94,7 @@ class SQLiteHelper(context: Context) :
     }
 
     @SuppressLint("Range")
-    fun getFirstBeaconbyId(mac: String): Beacon? {
+    fun getFirstBeaconbyMac(mac: String): Beacon? {
         val selectQuery = "SELECT * FROM $TBL_BEACONS WHERE mac = \'$mac\'"
         val db = this.readableDatabase
 

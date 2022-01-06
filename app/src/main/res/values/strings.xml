@@ -3,6 +3,7 @@
     <string name="title_sync">Sync</string>
     <string name="title_database">Beacons</string>
     <string name="title_info">Info</string>
+    <string name="title_add_location">Add Location</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="info_title">Device Info</string>
@@ -11,4 +12,7 @@
     <string name="mac_placeHolderDetails">MAC:</string>
     <string name="rssi_placeHolderDetails">RSSI:</string>
     <string name="contextDescriptionFloatingButton">to_sync_data</string>
+    <string name="placeHolder_label">Label:</string>
+    <string name="placeHolder_divison">Divison:</string>
+    <string name="placeHolder_place">Place:</string>
 </resources>
