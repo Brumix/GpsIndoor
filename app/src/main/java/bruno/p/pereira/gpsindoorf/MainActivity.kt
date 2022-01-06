@@ -1,6 +1,8 @@
 package bruno.p.pereira.gpsindoorf
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
