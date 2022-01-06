@@ -1,32 +1,30 @@
 package bruno.p.pereira.gpsindoorf.ui.beacons
 
 
-
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import bruno.p.pereira.gpsindoorf.R
-import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.enums.BundleEnum
 import bruno.p.pereira.gpsindoorf.models.Beacon
-import bruno.p.pereira.gpsindoorf.ui.sync.LIST_ITEMS
 
 
-const val LIST_DATABASE= "LIST_DATABASE"
+const val LIST_DATABASE = "LIST_DATABASE"
 
-class BeaconsAdpter(private val db: SQLiteHelper) : RecyclerView.Adapter<BeaconsAdpter.ViewHolder>() {
+class BeaconsAdpter(private val db: SQLiteHelper) :
+    RecyclerView.Adapter<BeaconsAdpter.ViewHolder>() {
 
 
     // TODO made this to live data or find a way to make this persistent
     private var listBeacons: MutableList<Beacon> = this.db.getAllBeacons()
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -49,6 +47,7 @@ class BeaconsAdpter(private val db: SQLiteHelper) : RecyclerView.Adapter<Beacons
         holder.rssiBeacon.text = currentBeacon.rssi.toString()
 
 
+
         holder.itemView.setOnClickListener {
 
             val bundle: Bundle = bundleOf(
@@ -62,6 +61,14 @@ class BeaconsAdpter(private val db: SQLiteHelper) : RecyclerView.Adapter<Beacons
                 .navigate(R.id.navigation_details, bundle)
 
         }
+
+
+        holder.addLocation.setColorFilter(Color.RED)
+        holder.addLocation.setOnClickListener {
+            Navigation.findNavController(holder.itemView).navigate(R.id.navigation_add_location)
+        }
+
+
     }
 
     override fun getItemCount(): Int = this.listBeacons.size
@@ -78,8 +85,7 @@ class BeaconsAdpter(private val db: SQLiteHelper) : RecyclerView.Adapter<Beacons
         var nameBeacon: TextView = itemView.findViewById(R.id.tvItemName)
         var macBeacon: TextView = itemView.findViewById(R.id.tvItemMac)
         var rssiBeacon: TextView = itemView.findViewById(R.id.tvItemRssi)
-
-
+        var addLocation: ImageView = itemView.findViewById(R.id.ivAddLoc)
     }
 
 
