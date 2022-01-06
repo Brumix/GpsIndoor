@@ -36,7 +36,7 @@ class SyncAdpter(private val _db: SQLiteHelper, beaconViewModel: SyncViewModel) 
             if (_db.getFirstBeaconbyId(beacon.mac) == null) {
                 val oldId = beacon.id
                 beacon.id = _db.getAllBeacons().size + 1
-                this._db.insertStudent(beacon)
+                this._db.insertBeacon(beacon)
                 beacon.id = oldId
             }
             notifyDataSetChanged()

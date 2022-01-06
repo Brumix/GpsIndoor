@@ -18,7 +18,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 
-private const val URL = "https://e36d-188-250-33-145.ngrok.io"
+private const val URL = "https://4cd9-188-250-33-145.ngrok.io"
 
 private const val ACTION_GET = "bruno.p.pereira.gpsindoorf.services.action.GET"
 private const val ACTION_POST = "bruno.p.pereira.gpsindoorf.services.action.POST"
@@ -130,7 +130,7 @@ class HttpRequest : IntentService("HttpRequest") {
             if (mapDB.containsKey(info.mac))
                 return
             info.id = db.getAllBeacons().size + 1
-            db.insertStudent(info)
+            db.insertBeacon(info)
             Log.v(TAG, "[HTTPREQUEST] BEACON ADDED $info")
 
         } else {
@@ -140,7 +140,7 @@ class HttpRequest : IntentService("HttpRequest") {
             for (i in info) {
                 if (!mapDB.containsKey(i.mac)) {
                     i.id = db.getAllBeacons().size + 1
-                    db.insertStudent(i)
+                    db.insertBeacon(i)
                     Log.v(TAG, "[HTTPREQUEST] BEACON ADDED $i")
                 }
             }
