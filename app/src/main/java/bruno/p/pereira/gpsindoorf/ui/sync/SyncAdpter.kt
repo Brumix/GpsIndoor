@@ -1,27 +1,26 @@
 package bruno.p.pereira.gpsindoorf.ui.sync
 
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import bruno.p.pereira.gpsindoorf.R
-import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.enums.BundleEnum
 import bruno.p.pereira.gpsindoorf.models.Beacon
-import bruno.p.pereira.gpsindoorf.services.HttpRequest
 import com.clj.fastble.BleManager
 import com.clj.fastble.data.BleScanState
 
 const val LIST_ITEMS = "LIST_ITEMS"
 
 
-class SyncAdpter(private val _db: SQLiteHelper, beaconViewModel: SyncViewModel) :
+class SyncAdpter(private val db: SQLiteHelper, beaconViewModel: SyncViewModel) :
     RecyclerView.Adapter<SyncAdpter.ViewHolder>() {
 
 
@@ -33,10 +32,10 @@ class SyncAdpter(private val _db: SQLiteHelper, beaconViewModel: SyncViewModel) 
             idGlobal = 0;
             notifyDataSetChanged()
         } else {
-            if (_db.getFirstBeaconbyMac(beacon.mac) == null) {
+            if (db.getFirstBeaconbyMac(beacon.mac) == null) {
                 val oldId = beacon.id
-                beacon.id = _db.getAllBeacons().size + 1
-                this._db.insertBeacon(beacon)
+                beacon.id = db.getAllBeacons().size + 1
+                this.db.insertBeacon(beacon)
                 beacon.id = oldId
             }
             notifyDataSetChanged()
@@ -78,6 +77,26 @@ class SyncAdpter(private val _db: SQLiteHelper, beaconViewModel: SyncViewModel) 
             Navigation.findNavController(holder.itemView)
                 .navigate(R.id.navigation_details, bundle)
         }
+
+        val loc = db.getFirstLocationbyMac(currentBeacon.mac)
+
+        if (loc == null) {
+            holder.addLocation.setColorFilter(Color.RED)
+        } else {
+            if (loc.place.isNotEmpty())
+                holder.addLocation.setColorFilter(Color.rgb(29, 175, 43))
+        }
+
+        holder.addLocation.setOnClickListener {
+            val bundle = bundleOf(
+                "mac" to currentBeacon.mac
+            )
+            Navigation.findNavController(holder.itemView)
+                .navigate(R.id.navigation_add_location, bundle)
+
+        }
+
+
     }
 
     override fun getItemCount(): Int = this.listBeacons.size
@@ -89,6 +108,7 @@ class SyncAdpter(private val _db: SQLiteHelper, beaconViewModel: SyncViewModel) 
         var nameBeacon: TextView = itemView.findViewById(R.id.tvItemName)
         var macBeacon: TextView = itemView.findViewById(R.id.tvItemMac)
         var rssiBeacon: TextView = itemView.findViewById(R.id.tvItemRssi)
+        var addLocation: ImageView = itemView.findViewById(R.id.ivAddLoc)
 
     }
 

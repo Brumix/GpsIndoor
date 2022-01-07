@@ -9,7 +9,7 @@ type Location struct {
 
 type DTOLocation struct {
 	Mac       string `json:"mac"`
-	PLace     string `json:"Place"`
+	PLace     string `json:"place"`
 	Division  string `json:"division"`
 	Longitude string `json:"longitude"`
 	Latitude  string `json:"latitude"`
