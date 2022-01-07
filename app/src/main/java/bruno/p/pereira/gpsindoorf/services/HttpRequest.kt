@@ -21,7 +21,7 @@ import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 
 
-private const val URL = "https://097c-188-250-33-145.ngrok.io"
+private const val URL = "https://10e1-188-250-33-145.ngrok.io"
 
 private const val ACTION_GET_BEACONS = "bruno.p.pereira.gpsindoorf.services.action.GET_BEACONS"
 private const val ACTION_GET_LOCATION = "bruno.p.pereira.gpsindoorf.services.action.GET_LOCATION"
@@ -245,17 +245,16 @@ class HttpRequest : IntentService("HttpRequest") {
             if (mapDB.containsKey(info.mac)) {
                 db.updateLocation(info)
                 Log.v(TAG, "[HTTPREQUEST] LOCATION UPDATED $info")
-                return
+            } else {
+                db.insertLocation(info)
+                Log.v(TAG, "[HTTPREQUEST] LOCATION ADDED $info")
             }
-            db.insertLocation(info)
-            Log.v(TAG, "[HTTPREQUEST] LOCATION ADDED $info")
-
         } else {
             val info: Array<DtoLocation> =
                 gson.fromJson(resp, object : TypeToken<Array<DtoLocation>>() {}.type)
 
             for (i in info) {
-                if (!mapDB.containsKey(i.mac)) {
+                if (mapDB.containsKey(i.mac)) {
                     db.updateLocation(i)
                     Log.v(TAG, "[HTTPREQUEST] LOCATION UPDATED $i")
                 } else {

@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import bruno.p.pereira.gpsindoorf.R
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.enums.BundleEnum
-import bruno.p.pereira.gpsindoorf.enums.LocationEnum
 import bruno.p.pereira.gpsindoorf.models.Beacon
 
 
@@ -62,10 +61,11 @@ class BeaconsAdpter(private val db: SQLiteHelper) :
                 .navigate(R.id.navigation_details, bundle)
         }
 
-             val loc = db.getFirstLocationbyMac(currentBeacon.mac)
+        val loc = db.getFirstLocationbyMac(currentBeacon.mac)
+
         if (loc == null) {
             holder.addLocation.setColorFilter(Color.RED)
-        }else{
+        } else {
             if (loc.place.isNotEmpty())
                 holder.addLocation.setColorFilter(Color.rgb(29, 175, 43))
         }
