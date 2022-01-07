@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import bruno.p.pereira.gpsindoorf.models.Beacon
 import bruno.p.pereira.gpsindoorf.models.DtoLocation
 
+
 class SQLiteHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
