@@ -5,12 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.models.Beacon
+import bruno.p.pereira.gpsindoorf.models.Location
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SyncViewModel : ViewModel() {
 
     private val _beacons: MutableList<Beacon> = mutableListOf()
+    val locMap: MutableMap<String, Location> = mutableMapOf()
 
     fun getBeacons(): MutableList<Beacon> {
         return _beacons
@@ -25,6 +27,11 @@ class SyncViewModel : ViewModel() {
         _beacons.add(b)
         Log.v(TAG, "[VIEWMODEL] new Beacon added")
     }
+
+    fun addLocation(mac: String, loc: Location) = viewModelScope.launch(Dispatchers.IO) {
+        locMap[mac] = loc
+    }
+
 
     fun clearAllBeacons() = viewModelScope.launch(Dispatchers.IO) {
         _beacons.removeAll(_beacons)

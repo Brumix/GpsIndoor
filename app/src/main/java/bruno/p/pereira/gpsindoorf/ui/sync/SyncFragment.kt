@@ -21,7 +21,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
@@ -61,6 +60,7 @@ class SyncFragment : Fragment() {
             .enableLog(true)
             .setReConnectCount(1, 5000)
             .setConnectOverTime(20000).operateTimeout = 5000
+
     }
 
     override fun onCreateView(
@@ -197,6 +197,6 @@ class SyncFragment : Fragment() {
         syncViewModel.addBeacons(beacon)
         Log.v(TAG, "[VIEWMODEL]: ${syncViewModel.getBeacons().size}")
         _syncAdapt.notifyChanges(beacon)
-        HttpRequest.startActionPOST(this.requireContext(),beacon)
+        HttpRequest.startActionPOSTBeacons(this.requireContext(),beacon)
     }
 }

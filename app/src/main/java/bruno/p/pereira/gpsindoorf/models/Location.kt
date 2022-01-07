@@ -5,7 +5,6 @@ import bruno.p.pereira.gpsindoorf.enums.LocationEnum
 open class Location {
 
     private var whereIs: LocationEnum = LocationEnum.UNKNOWN
-    private var label: String = ""
     private var place: String = " "
     private var division: String = " "
     private var long: String = ""
@@ -23,9 +22,6 @@ open class Location {
         return this.division
     }
 
-    fun getLabel(): String {
-        return this.label
-    }
 
     fun getLong(): String {
         return this.long
@@ -36,7 +32,7 @@ open class Location {
     }
 
     fun setWhereIs(local: LocationEnum) {
-   this.whereIs = local
+        this.whereIs = local
     }
 
     fun setPlace(place: String) {
@@ -47,10 +43,6 @@ open class Location {
         this.division = division
     }
 
-    fun setLabel(label: String) {
-        this.label = label
-    }
-
     fun setLong(long: String) {
         this.long = long
     }
@@ -58,5 +50,4 @@ open class Location {
     fun setLat(lat: String) {
         this.lat = lat
     }
-
 }

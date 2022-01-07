@@ -7,8 +7,11 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
+import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.enums.LocationEnum
 import bruno.p.pereira.gpsindoorf.models.Beacon
+import bruno.p.pereira.gpsindoorf.models.DtoLocation
 import java.lang.Exception
 
 class SQLiteHelper(context: Context) :
@@ -18,10 +21,17 @@ class SQLiteHelper(context: Context) :
         private const val DATABASE_VERSION = 1
         private const val DATABASE_NAME = "Gpsindoor.db"
         private const val TBL_BEACONS = "beacons"
+        private const val TBL_LOCATION = "location"
         private const val ID = "id"
         private const val NAME = "name"
         private const val MAC = "mac"
         private const val RSSI = "rssi"
+
+        private const val PLACE = "place"
+        private const val DIVISION = "division"
+        private const val LONGITUDE = "longitude"
+        private const val LATITUDE = "latitude"
+
 
     }
 
@@ -32,12 +42,24 @@ class SQLiteHelper(context: Context) :
                 + MAC + " TEXT PRIMARY KEY, "
                 + RSSI + " INTEGER )")
 
+        val createTblLocation = ("CREATE TABLE " + TBL_LOCATION + "("
+                + MAC + " TEXT, "
+                + PLACE + " TEXT, "
+                + DIVISION + " TEXT, "
+                + LONGITUDE + " TEXT, "
+                + LATITUDE + " TEXT )")
+
+
+
 
         db?.execSQL(createTblBeacons)
+        db?.execSQL(createTblLocation)
+
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db!!.execSQL("DROP TABLE IF EXISTS $TBL_BEACONS")
+        db!!.execSQL("DROP TABLE IF EXISTS $TBL_LOCATION")
         onCreate(db)
     }
 
@@ -57,6 +79,22 @@ class SQLiteHelper(context: Context) :
         return success
     }
 
+    fun insertLocation(dto: DtoLocation): Long {
+        val db = this.writableDatabase
+
+        val contentValues = ContentValues()
+        contentValues.put(MAC, dto.mac)
+        contentValues.put(PLACE, dto.place)
+        contentValues.put(DIVISION, dto.division)
+        contentValues.put(LONGITUDE, dto.longitude)
+        contentValues.put(LATITUDE, dto.latitude)
+
+        val success = db.insert(TBL_LOCATION, null, contentValues)
+
+        db.close()
+
+        return success
+    }
 
     @SuppressLint("Range")
     fun getAllBeacons(): ArrayList<Beacon> {
@@ -108,10 +146,10 @@ class SQLiteHelper(context: Context) :
             return null
         }
 
-        var idB: Int
-        var nameB: String
-        var macB: String
-        var rssiB: Int
+        val idB: Int
+        val nameB: String
+        val macB: String
+        val rssiB: Int
 
         if (cursor.moveToFirst()) {
 
@@ -122,6 +160,41 @@ class SQLiteHelper(context: Context) :
 
             return Beacon(id = idB, name = nameB, mac = macB, rssi = rssiB)
 
+        }
+        return null
+    }
+
+    @SuppressLint("Range")
+    fun getFirstLocationbyMac(mac: String): DtoLocation? {
+        val selectQuery = "SELECT * FROM $TBL_LOCATION WHERE mac = \'$mac\'"
+        val db = this.readableDatabase
+
+        val cursor: Cursor?
+
+        try {
+            cursor = db.rawQuery(selectQuery, null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            db.execSQL(selectQuery)
+            return null
+        }
+
+        val macB: String
+        val placeB: String
+        val divisonB: String
+        val longuitudeB: String
+        val latitudeB: String
+
+        if (cursor.moveToFirst()) {
+
+
+            macB = cursor.getString(cursor.getColumnIndex(MAC))
+            placeB = cursor.getString(cursor.getColumnIndex(PLACE))
+            divisonB = cursor.getString(cursor.getColumnIndex(DIVISION))
+            longuitudeB = cursor.getString(cursor.getColumnIndex(LONGITUDE))
+            latitudeB = cursor.getString(cursor.getColumnIndex(LATITUDE))
+
+            return DtoLocation(macB, placeB, divisonB, longuitudeB, latitudeB)
         }
         return null
     }
@@ -141,6 +214,21 @@ class SQLiteHelper(context: Context) :
         return success
     }
 
+    fun updateLocation(dto: DtoLocation): Int {
+        val db = this.writableDatabase
+
+        val contentValues = ContentValues()
+        contentValues.put(MAC, dto.mac)
+        contentValues.put(PLACE, dto.place)
+        contentValues.put(DIVISION, dto.division)
+        contentValues.put(LONGITUDE, dto.longitude)
+        contentValues.put(LATITUDE, dto.latitude)
+        val mac = dto.mac
+        val success = db.update(TBL_BEACONS, contentValues, "$MAC = '$mac' ", null)
+        db.close()
+        return success
+    }
+
     fun deleteBeaconsById(id: Int): Int {
         val db = this.writableDatabase
 
@@ -148,6 +236,17 @@ class SQLiteHelper(context: Context) :
         contentValues.put(ID, id)
 
         val success = db.delete(TBL_BEACONS, "id=$id", null)
+        db.close()
+        return success
+    }
+
+    fun deleteLocationByMac(mac: String): Int {
+        val db = this.writableDatabase
+
+        val contentValues = ContentValues()
+        contentValues.put(MAC, mac)
+
+        val success = db.delete(TBL_BEACONS, "$MAC= '$mac'", null)
         db.close()
         return success
     }

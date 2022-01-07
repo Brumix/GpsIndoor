@@ -6,9 +6,13 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.models.Beacon
+import bruno.p.pereira.gpsindoorf.models.DtoLocation
+import bruno.p.pereira.gpsindoorf.models.Location
+import bruno.p.pereira.gpsindoorf.ui.sync.SyncViewModel
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
@@ -17,17 +21,23 @@ import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 
 
-private const val URL = "https://c857-188-250-33-145.ngrok.io/"
+private const val URL = "https://c857-188-250-33-145.ngrok.io"
 
-private const val ACTION_GET = "bruno.p.pereira.gpsindoorf.services.action.GET"
-private const val ACTION_POST = "bruno.p.pereira.gpsindoorf.services.action.POST"
+private const val ACTION_GET_BEACONS = "bruno.p.pereira.gpsindoorf.services.action.GET_BEACONS"
+private const val ACTION_GET_LOCATION = "bruno.p.pereira.gpsindoorf.services.action.GET_LOCATION"
+private const val ACTION_POST_BEACONS = "bruno.p.pereira.gpsindoorf.services.action.POST_BEACONS"
+private const val ACTION_POST_LOC = "bruno.p.pereira.gpsindoorf.services.action.POST_LOC"
+
 
 // TODO: Rename parameters
 private const val IDBEACON = "bruno.p.pereira.gpsindoorf.services.extra.IDBEACON"
 private const val NAMEBEACON = "bruno.p.pereira.gpsindoorf.services.extra.NAMEBEACON"
 private const val MACBEACON = "bruno.p.pereira.gpsindoorf.services.extra.MACEBEACON"
 private const val RSSIBEACON = "bruno.p.pereira.gpsindoorf.services.extra.RSSI"
-
+private const val PLACELOC = "bruno.p.pereira.gpsindoorf.services.extra.PLACELOC"
+private const val DIVISIONLOC = "bruno.p.pereira.gpsindoorf.services.extra.DIVISIONLOC"
+private const val LONGUITUDELOC = "bruno.p.pereira.gpsindoorf.services.extra.LONGUITUDELOC"
+private const val LATITUDELOC = "bruno.p.pereira.gpsindoorf.services.extra.LATITUDELOC"
 
 class HttpRequest : IntentService("HttpRequest") {
 
@@ -35,25 +45,38 @@ class HttpRequest : IntentService("HttpRequest") {
         SQLiteHelper(this)
     }
 
+
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
-            ACTION_GET -> {
+            ACTION_GET_BEACONS -> {
                 val param1 = intent.getStringExtra(MACBEACON)!!
-                handleActionGET(param1)
+                handleActionGETBeacon(param1)
             }
-            ACTION_POST -> {
+            ACTION_GET_LOCATION -> {
+                val param1 = intent.getStringExtra(MACBEACON)!!
+                handleActionGETLocation(param1)
+            }
+            ACTION_POST_BEACONS -> {
                 val id = intent.getIntExtra(IDBEACON, -1)
                 val name = intent.getStringExtra(NAMEBEACON)!!
                 val mac = intent.getStringExtra(MACBEACON)!!
                 val rssi = intent.getIntExtra(RSSIBEACON, -1)
 
-                handleActionPOST(Beacon(id, name, mac, rssi))
+                handleActionPOSTBeacon(Beacon(id, name, mac, rssi))
+            }
+            ACTION_POST_LOC -> {
+                val mac = intent.getStringExtra(MACBEACON)!!
+                val place = intent.getStringExtra(PLACELOC)!!
+                val division = intent.getStringExtra(DIVISIONLOC)!!
+                val longuitude = intent.getStringExtra(LONGUITUDELOC)!!
+                val latitude = intent.getStringExtra(LATITUDELOC)!!
+                handleActionPOSTLoc(DtoLocation(mac, place, division, longuitude, latitude))
             }
         }
     }
 
 
-    private fun handleActionGET(param1: String) {
+    private fun handleActionGETBeacon(param1: String) {
 
         var url = "$URL/beacon/${Build.ID}"
         if (param1 != "") {
@@ -68,7 +91,7 @@ class HttpRequest : IntentService("HttpRequest") {
             Request.Method.GET, url,
             { //Handle Response
                     response ->
-                getResponseGEt(response, param1)
+                getResponseGETBeacons(response, param1)
             },
             { //Handle Error
                     error ->
@@ -79,7 +102,30 @@ class HttpRequest : IntentService("HttpRequest") {
         queue.add(request)
     }
 
-    private fun handleActionPOST(beacon: Beacon) {
+    private fun handleActionGETLocation(mac: String) {
+
+        var url = "$URL/beacon/${Build.ID}/loc/$mac"
+
+        Log.v(TAG, "[URL] $url")
+        val queue = SingletonVolleyRequestQueue.getInstance(this.applicationContext).requestQueue
+        // Create Request with Listeners:
+        // GET METHOD
+        val request = StringRequest(
+            Request.Method.GET, url,
+            { //Handle Response
+                    response ->
+                Log.v(TAG, response)
+            },
+            { //Handle Error
+                    error ->
+                Toast.makeText(this, "ERROR : ENDPOINT NOT FOUND", Toast.LENGTH_LONG).show()
+                Log.e(TAG, "launchAsyncVolleyHttpRequest(): Response.Listener Error=$error")
+            }
+        )
+        queue.add(request)
+    }
+
+    private fun handleActionPOSTBeacon(beacon: Beacon) {
 
         if (beacon.id == -1 && beacon.rssi == -1) {
             return
@@ -100,7 +146,9 @@ class HttpRequest : IntentService("HttpRequest") {
             Request.Method.POST, url, body,
             { //Handle Response
                     response ->
-                Log.v(TAG, "Beacon added with sucess to the cloud!!")
+                // val gson = Gson()
+                // val info: DtoLocation = gson.fromJson(response.toString(), DtoLocation::class.java)
+                Log.v(TAG, "[HTTPREQUEST]Beacon added with sucess to the cloud!!")
 
             },
             { //Handle Error
@@ -114,7 +162,41 @@ class HttpRequest : IntentService("HttpRequest") {
         queue.add(request)
     }
 
-    private fun getResponseGEt(resp: String, mac: String) {
+    private fun handleActionPOSTLoc(loc: DtoLocation) {
+
+        val url = "$URL/beacon/${Build.ID}/loc"
+        Log.v(TAG, "[URL] $url")
+
+        val queue = SingletonVolleyRequestQueue.getInstance(this.applicationContext).requestQueue
+        val body = JSONObject()
+        body.accumulate("mac", loc.mac)
+        body.accumulate("place", loc.place)
+        body.accumulate("division", loc.division)
+        body.accumulate("longitude", loc.longitude)
+        body.accumulate("latitude", loc.latitude)
+        // Create Request with Listeners:
+        //  1 listener to handle Response from the provided URL;
+        //  1 listener for error handling.
+        val request = JsonObjectRequest(
+            Request.Method.POST, url, body,
+            { //Handle Response
+                    response ->
+                Log.v(TAG, "[HTTPREQUEST] Location added with sucess to the cloud!!")
+
+            },
+            { //Handle Error
+                    error ->
+                Log.e(
+                    TAG,
+                    "launchAsyncVolleyHttpRequest(): Response.Listener Error=$error"
+                )
+            })
+
+        queue.add(request)
+    }
+
+
+    private fun getResponseGETBeacons(resp: String, mac: String) {
 
         val gson = Gson()
         val listBeacons: MutableList<Beacon> = this.db.getAllBeacons()
@@ -150,9 +232,18 @@ class HttpRequest : IntentService("HttpRequest") {
     companion object {
 
         @JvmStatic
-        fun startActionGET(context: Context, macBeacon: String = "") {
+        fun startActionGETBeacons(context: Context, macBeacon: String = "") {
             val intent = Intent(context, HttpRequest::class.java).apply {
-                action = ACTION_GET
+                action = ACTION_GET_BEACONS
+                putExtra(MACBEACON, macBeacon)
+            }
+            context.startService(intent)
+        }
+
+        @JvmStatic
+        fun startActionGETLocation(context: Context, macBeacon: String = "") {
+            val intent = Intent(context, HttpRequest::class.java).apply {
+                action = ACTION_GET_LOCATION
                 putExtra(MACBEACON, macBeacon)
             }
             context.startService(intent)
@@ -160,13 +251,25 @@ class HttpRequest : IntentService("HttpRequest") {
 
 
         @JvmStatic
-        fun startActionPOST(context: Context, beacon: Beacon) {
+        fun startActionPOSTBeacons(context: Context, beacon: Beacon) {
             val intent = Intent(context, HttpRequest::class.java).apply {
-                action = ACTION_POST
+                action = ACTION_POST_BEACONS
                 putExtra(IDBEACON, beacon.id)
                 putExtra(NAMEBEACON, beacon.name)
                 putExtra(MACBEACON, beacon.mac)
                 putExtra(RSSIBEACON, beacon.rssi)
+            }
+            context.startService(intent)
+        }
+
+        fun startActionPOSTLoc(context: Context, loc: DtoLocation) {
+            val intent = Intent(context, HttpRequest::class.java).apply {
+                action = ACTION_POST_LOC
+                putExtra(MACBEACON, loc.mac)
+                putExtra(PLACELOC, loc.place)
+                putExtra(DIVISIONLOC, loc.division)
+                putExtra(LONGUITUDELOC, loc.longitude)
+                putExtra(LATITUDELOC, loc.latitude)
             }
             context.startService(intent)
         }
