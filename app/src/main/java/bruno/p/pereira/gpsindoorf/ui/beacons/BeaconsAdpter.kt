@@ -62,18 +62,21 @@ class BeaconsAdpter(private val db: SQLiteHelper) :
                 .navigate(R.id.navigation_details, bundle)
         }
 
-
-        when (currentBeacon.getPWhereIs()) {
-            LocationEnum.UNKNOWN -> holder.addLocation.setColorFilter(Color.RED)
-            LocationEnum.LOCAl -> holder.addLocation.setColorFilter(Color.rgb(29, 175, 43))
-            else -> {}
+             val loc = db.getFirstLocationbyMac(currentBeacon.mac)
+        if (loc == null) {
+            holder.addLocation.setColorFilter(Color.RED)
+        }else{
+            if (loc.place.isNotEmpty())
+                holder.addLocation.setColorFilter(Color.rgb(29, 175, 43))
         }
+
         holder.addLocation.setOnClickListener {
             val bundle = bundleOf(
                 "mac" to currentBeacon.mac
             )
             Navigation.findNavController(holder.itemView)
                 .navigate(R.id.navigation_add_location, bundle)
+
         }
 
 

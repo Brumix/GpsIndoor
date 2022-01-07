@@ -7,17 +7,17 @@ import (
 	"projects/PAmAPI/models"
 )
 
-var beacons = []models.Beacon{
+var beaconsGeneric = []models.Beacon{
 	{0, "beacon-0", "54-AX-A2-D4-15-89", -50, models.Location{}},
 	{1, "beacon-1", "34-1C-AF-23-56-B7", 12, models.Location{}},
 	{2, "beacon-2", "D7-37-5B-87-49-64", -70, models.Location{}},
 	{3, "beacon-3", "F9-48-F4-E7-13-4B", -50, models.Location{}}}
 
 var master = []models.Master{
-	{"RSR1.201013.001", beacons},
+	{"RSR1.201013.001", beaconsGeneric},
 }
 
-var MasterId = len(beacons)
+var MasterId = len(beaconsGeneric)
 
 func GetAllBeacons(context *gin.Context) {
 	var idUser, exist = checkUser(context)
@@ -73,7 +73,7 @@ func PostAddBeacon(context *gin.Context) {
 	}
 	for _, beacon := range *result {
 		if beacon.Mac == bodyBeacon.Mac {
-			context.JSON(http.StatusOK, gin.H{"msg": "Invalid id"})
+			context.JSON(http.StatusOK, beacon.Loc)
 			return
 		}
 	}
@@ -92,6 +92,7 @@ func PostAddLoc(context *gin.Context) {
 
 	var loc models.DTOLocation
 	errDTO := context.ShouldBind(&loc)
+	fmt.Println(loc)
 	if errDTO != nil {
 		fmt.Println(errDTO)
 		context.JSON(http.StatusOK, gin.H{"msg": "Invalid id"})
@@ -100,9 +101,8 @@ func PostAddLoc(context *gin.Context) {
 
 	for i, beacon := range *result {
 		if beacon.Mac == loc.Mac {
-			var current = &beacons[i]
+			var current = &(*result)[i]
 			current.Loc = models.Location{
-				Label:     loc.Label,
 				Place:     loc.PLace,
 				Division:  loc.Division,
 				Longitude: loc.Longitude,
