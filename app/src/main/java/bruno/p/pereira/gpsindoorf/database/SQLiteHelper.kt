@@ -16,7 +16,7 @@ class SQLiteHelper(context: Context) :
 
     companion object {
         private const val DATABASE_VERSION = 1
-        private const val DATABASE_NAME = "1psindoor.db"
+        private const val DATABASE_NAME = "Gpsindoor.db"
         private const val TBL_BEACONS = "beacons"
         private const val TBL_LOCATION = "location"
         private const val ID = "id"
