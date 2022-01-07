@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import bruno.p.pereira.gpsindoorf.databinding.FragmentInfoBinding
 import bruno.p.pereira.gpsindoorf.enums.BundleEnum
 import bruno.p.pereira.gpsindoorf.models.Beacon
+import bruno.p.pereira.gpsindoorf.services.HttpRequest
 import com.clj.fastble.BleManager
 import com.clj.fastble.data.BleScanState
 
@@ -30,7 +31,6 @@ class InfoFragment : Fragment() {
         super.onCreate(savedInstanceState)
         if (BleManager.getInstance().scanSate == BleScanState.STATE_SCANNING)
             BleManager.getInstance().cancelScan()
-
     }
 
     override fun onCreateView(

@@ -21,7 +21,7 @@ import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 
 
-private const val URL = "https://c857-188-250-33-145.ngrok.io"
+private const val URL = "https://097c-188-250-33-145.ngrok.io"
 
 private const val ACTION_GET_BEACONS = "bruno.p.pereira.gpsindoorf.services.action.GET_BEACONS"
 private const val ACTION_GET_LOCATION = "bruno.p.pereira.gpsindoorf.services.action.GET_LOCATION"
@@ -104,7 +104,10 @@ class HttpRequest : IntentService("HttpRequest") {
 
     private fun handleActionGETLocation(mac: String) {
 
-        var url = "$URL/beacon/${Build.ID}/loc/$mac"
+        var url = "$URL/beacon/${Build.ID}/loc"
+        if (mac != "") {
+            url = "$url/$mac"
+        }
 
         Log.v(TAG, "[URL] $url")
         val queue = SingletonVolleyRequestQueue.getInstance(this.applicationContext).requestQueue
@@ -114,7 +117,7 @@ class HttpRequest : IntentService("HttpRequest") {
             Request.Method.GET, url,
             { //Handle Response
                     response ->
-                Log.v(TAG, response)
+                getResponseGETLocation(response, mac)
             },
             { //Handle Error
                     error ->
@@ -226,6 +229,42 @@ class HttpRequest : IntentService("HttpRequest") {
             }
         }
 
+    }
+
+    private fun getResponseGETLocation(resp: String, mac: String) {
+
+        val gson = Gson()
+        val listLocations: MutableList<DtoLocation> = this.db.getAllLocations()
+        val mapDB = mutableMapOf<String, DtoLocation>()
+        for (i in listLocations)
+            mapDB[i.mac] = i
+
+
+        if (mac != "") {
+            val info: DtoLocation = gson.fromJson(resp, DtoLocation::class.java)
+            if (mapDB.containsKey(info.mac)) {
+                db.updateLocation(info)
+                Log.v(TAG, "[HTTPREQUEST] LOCATION UPDATED $info")
+                return
+            }
+            db.insertLocation(info)
+            Log.v(TAG, "[HTTPREQUEST] LOCATION ADDED $info")
+
+        } else {
+            val info: Array<DtoLocation> =
+                gson.fromJson(resp, object : TypeToken<Array<DtoLocation>>() {}.type)
+
+            for (i in info) {
+                if (!mapDB.containsKey(i.mac)) {
+                    db.updateLocation(i)
+                    Log.v(TAG, "[HTTPREQUEST] LOCATION UPDATED $i")
+                } else {
+                    db.insertLocation(i)
+                    Log.v(TAG, "[HTTPREQUEST] LOCATION ADDED $i")
+                }
+
+            }
+        }
     }
 
 

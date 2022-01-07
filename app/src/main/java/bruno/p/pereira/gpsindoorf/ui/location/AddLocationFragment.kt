@@ -57,7 +57,6 @@ class AddLocationFragment : Fragment() {
             if (loc != null) {
                 Log.v(TAG,"Update")
                 db.updateLocation(dto)
-                TODO("RESOLVER ERRO UPDATE!!")
             }
             else {
                 Log.v(TAG,"Insert")

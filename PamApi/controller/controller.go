@@ -8,8 +8,10 @@ import (
 )
 
 var beaconsGeneric = []models.Beacon{
-	{0, "beacon-0", "54-AX-A2-D4-15-89", -50, models.Location{}},
-	{1, "beacon-1", "34-1C-AF-23-56-B7", 12, models.Location{}},
+	{Name: "beacon-0", Mac: "54-AX-A2-D4-15-89", Rssi: -50,
+		Loc: models.Location{Place: "Casa Bruno", Division: "Cozinha", Longitude: "0", Latitude: "0"}},
+	{Id: 1, Name: "beacon-1", Mac: "34-1C-AF-23-56-B7", Rssi: 12,
+		Loc: models.Location{Place: "Casa Bruno", Division: "Sala de estar", Longitude: "0", Latitude: "0"}},
 	{2, "beacon-2", "D7-37-5B-87-49-64", -70, models.Location{}},
 	{3, "beacon-3", "F9-48-F4-E7-13-4B", -50, models.Location{}}}
 
@@ -113,6 +115,31 @@ func PostAddLoc(context *gin.Context) {
 		}
 	}
 	context.JSON(http.StatusOK, gin.H{"msg": "Invalid id"})
+}
+
+func GetAllLocByMac(context *gin.Context) {
+	var idUser, exist = checkUser(context)
+	if !exist {
+		return
+	}
+	var result = idUserBeacons(idUser)
+
+	var dto []models.DTOLocation
+	var currentDto models.DTOLocation
+	for _, beacon := range *result {
+		if beacon.Loc.Place != "" && beacon.Loc.Division != "" {
+
+			currentDto.Mac = beacon.Mac
+			currentDto.PLace = beacon.Loc.Place
+			currentDto.Division = beacon.Loc.Division
+			currentDto.Longitude = beacon.Loc.Longitude
+			currentDto.Latitude = beacon.Loc.Latitude
+
+			dto = append(dto, currentDto)
+		}
+	}
+	context.JSON(http.StatusOK, dto)
+
 }
 
 func GetLocByMac(context *gin.Context) {

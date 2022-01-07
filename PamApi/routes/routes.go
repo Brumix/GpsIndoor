@@ -11,6 +11,7 @@ func Routes(router *gin.Engine) {
 	router.GET("/beacon/:id/:mac", controller.GetBeaconByMac)
 	router.POST("/beacon/:id", controller.PostAddBeacon)
 
+	router.GET("/beacon/:id//loc", controller.GetAllLocByMac)
 	router.GET("/beacon/:id//loc/:mac", controller.GetLocByMac)
 	router.POST("/beacon/:id/loc", controller.PostAddLoc)
 

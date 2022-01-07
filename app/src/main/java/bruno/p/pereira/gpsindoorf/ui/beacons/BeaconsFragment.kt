@@ -7,13 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.databinding.FragmentBeaconsBinding
 import bruno.p.pereira.gpsindoorf.services.HttpRequest
-import bruno.p.pereira.gpsindoorf.ui.sync.SyncViewModel
 import com.clj.fastble.BleManager
 import com.clj.fastble.data.BleScanState
 
@@ -59,6 +57,9 @@ class BeaconsFragment : Fragment() {
             Toast.makeText(activity, "Syncing Information", Toast.LENGTH_LONG).show()
 
             HttpRequest.startActionGETBeacons(this.requireContext())
+            HttpRequest.startActionGETLocation(this.requireContext())
+
+
             sync.animate().apply {
                 duration = 2000
                 rotationBy(360f)
@@ -67,7 +68,7 @@ class BeaconsFragment : Fragment() {
             root.postDelayed({
                 _beaconAdapt.notify_changes()
                 Log.v(TAG, "[BEACONSLIST] UI Updated")
-            }, 2000)
+            }, 3000)
 
 
         }
