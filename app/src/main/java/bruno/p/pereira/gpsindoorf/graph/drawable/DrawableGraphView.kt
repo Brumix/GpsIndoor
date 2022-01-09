@@ -85,9 +85,9 @@ class DrawableGraphView : View {
         val y = event.y
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                if (selectedNode == null)
+                if (selectedNode == null) {
                     selectedNode = getDrawableNodeAtPoint(x, y)
-                else {
+                } else {
                     val nodeB = getDrawableNodeAtPoint(x, y)
 
                     if (nodeB == null) { //user clicks on an empty area after choose first node
@@ -231,6 +231,7 @@ class DrawableGraphView : View {
             selectedNode = node
             invalidate()
         }
+
     }
 
     private fun addDrawableNode(drawableNode: DrawableNode) {
@@ -329,12 +330,14 @@ class DrawableGraphView : View {
 
     private fun selectStartPoint(node: DrawableNode) {
         startPoint = node
+
         invalidate()
     }
 
     private fun deselectStartPoint() {
         startPoint = null
         if (endPoint != null) {
+
             pathNodesOrder.clear()
         }
         invalidate()
@@ -342,12 +345,14 @@ class DrawableGraphView : View {
 
     private fun selectEndPoint(node: DrawableNode) {
         endPoint = node
+
         invalidate()
     }
 
     private fun deselectEndPoint() {
         endPoint = null
         if (startPoint != null) {
+
             pathNodesOrder.clear()
         }
         invalidate()
@@ -450,6 +455,7 @@ class DrawableGraphView : View {
         return stringPath.toString()
     }
 
+
     fun reset() {
         graph = DrawableGraph()
         startPoint = null
@@ -459,6 +465,7 @@ class DrawableGraphView : View {
         pathNodesOrder.clear()
         actionsManager.clearHistory()
         invalidate()
+
     }
 
     fun setActionsManager(actionsManager: ActionsManager) {
@@ -500,8 +507,7 @@ class DrawableGraphView : View {
 
     private fun undoAdd(action: ActionAdd) {
         graph.removeNode(action.drawableNode)
-        weighBoxes.removeAll(weighBoxes.filter { edge -> edge.nodeA == selectedNode || edge.nodeB == selectedNode }
-            .toSet())
+        weighBoxes.removeAll(weighBoxes.filter { edge -> edge.nodeA == selectedNode || edge.nodeB == selectedNode })
     }
 
     private fun redoAdd(action: ActionAdd) {

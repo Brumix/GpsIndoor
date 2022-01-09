@@ -16,9 +16,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GpsIndoorF">
+        <activity
+            android:name=".ui.graph.activity.GraphActivity"
+            android:exported="true" />
+
         <service
             android:name=".services.HttpRequest"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <activity
             android:name=".MainActivity"
