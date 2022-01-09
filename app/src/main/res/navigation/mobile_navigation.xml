@@ -31,4 +31,9 @@
         android:name="bruno.p.pereira.gpsindoorf.ui.location.AddLocationFragment"
         android:label="@string/title_add_location"
         tools:layout="@layout/fragment_add_location" />
+    <fragment
+        android:id="@+id/navigation_graph"
+        android:name="bruno.p.pereira.gpsindoorf.ui.graph.GraphFragment"
+        android:label="Graph"
+        tools:layout="@layout/fragment_graph" />
 </navigation>
