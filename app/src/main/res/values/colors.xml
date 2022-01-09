@@ -7,4 +7,56 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="colorPrimary">#03A9F4</color>
+    <color name="colorPrimaryDark">#1A77C2</color>
+    <color name="colorAccent">#FFC400</color>
+    <color name="colorDisabledAccent">#D6D6D6</color>
+    <color name="colorBackground">#FFFFFF</color>
+    <color name="colorBackgroundBar">#11000000</color>
+    <color name="colorGraph">#FFFFFF</color>
+    <color name="colorBackgroundIntro">#EEEEEE</color>
+
+    <color name="colorGroupWeighted">#E0F7FA</color>
+    <color name="colorGroupUnweighted">#E8EAF6</color>
+    <color name="colorTextGroup">#888888</color>
+    <color name="colorRadio">#FFF59D</color>
+    <color name="colorRadioChecked">@color/colorAccent</color>
+    <color name="colorRadioText">#222222</color>
+
+    <color name="colorTextButton">#333333</color>
+    <color name="colorPath">#FFC400</color>
+    <color name="colorVisited">#FFEBBA</color>
+    <color name="colorStartPoint">#03A9F4</color>
+    <color name="colorEndPoint">#651FFF</color>
+    <color name="colorRemovedCell">#DDDDDD</color>
+    <color name="colorRemovedCellX">#CCCCCC</color>
+    <color name="colorIncreasedWeightText">#555555</color>
+    <color name="colorTableHorizontalLines">#222222</color>
+    <color name="colorTableVerticalLines">#222222</color>
+
+    <color name="colorNode">@color/colorAccent</color>
+    <color name="colorNodeText">#FFFFFF</color>
+    <color name="colorEdge">#AAAAAA</color>
+    <color name="colorTextWeight">#FFFFFF</color>
+    <color name="colorBoxWeight">#AAAAAA</color>
+    <color name="colorDrawablePath">#D500F9</color>
+    <color name="colorSelectedNode">#FF1744</color>
+    <color name="colorBoundaries">#AAAAAA</color>
+
+    <color name="colorSelectedTabIcon">@color/colorAccent</color>
+    <color name="colorTabIcon">#BBBBBB</color>
+    <color name="colorDots">#BBBBBB</color>
+    <color name="colorSelectedDot">@color/colorAccent</color>
+    <color name="colorIntroButton">#555555</color>
+    <color name="colorIntroHeader">#777777</color>
+    <color name="colorIntroDescription">#777777</color>
+
+    <color name="colorAboutTextButton">#FFFFFF</color>
+
+    <color name="colorConsoleBackground">#3A3A3A</color>
+    <color name="colorConsoleTextBackground">#4C4C4C</color>
+    <color name="colorConsoleText">#FFEBBA</color>
+
+    <color name="colorMenuIcon">#FFFFFF</color>
 </resources>

@@ -15,4 +15,23 @@
     <string name="placeHolder_label">Label:</string>
     <string name="placeHolder_divison">Divison:</string>
     <string name="placeHolder_place">Place:</string>
+    <string name="title_graph">Graph</string>
+
+    <!-- TODO: New Words -->
+    <string name="button_run">Run</string>
+    <string name="button_reset">Reset</string>
+    <string name="button_undo">Undo</string>
+    <string name="remove_node">Remove Node</string>
+    <string name="button_redo">Redo</string>
+    <string name="node">node</string>
+    <string name="nodes">nodes</string>
+    <string name="graph_information_total_of">Total</string>
+    <string name="graph_information_is_not_connected">is not connected</string>
+    <string name="graph_information_is_connected_to">is connected to</string>
+    <string name="delete_graph">Delete graph</string>
+    <string name="confirm_delete">Are you sure you want to delete the graph?</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+
+
 </resources>
