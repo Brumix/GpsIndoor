@@ -1,9 +1,9 @@
 package bruno.p.pereira.gpsindoorf.ui.graph.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import bruno.p.pereira.gpsindoorf.R
 import bruno.p.pereira.gpsindoorf.graph.drawable.DrawableGraphView
 import bruno.p.pereira.gpsindoorf.graph.manager.ActionsManager
@@ -19,7 +19,11 @@ class GraphActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_graph)
         drawView.setActionsManager(actionsManager)
+
+        // showing the back button in action bar
+        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
     }
+
 
     fun runAlgorithm(view: View) = drawView.runAlgorithm()
 
