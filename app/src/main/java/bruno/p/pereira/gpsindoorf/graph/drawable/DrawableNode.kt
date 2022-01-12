@@ -3,6 +3,7 @@ package bruno.p.pereira.gpsindoorf.graph.drawable
 import android.graphics.RectF
 import bruno.p.pereira.gpsindoorf.graph.data.Edge
 import bruno.p.pereira.gpsindoorf.graph.data.Node
+import java.time.temporal.TemporalAmount
 
 
 class DrawableNode (val id: String, var centerX: Float, var centerY: Float):
@@ -35,7 +36,7 @@ class DrawableNode (val id: String, var centerX: Float, var centerY: Float):
         rect.bottom = centerY + RADIUS
     }
 
-    fun connectByEdge(nodeToConnect: DrawableNode, weighBox: WeighBox, weight: Double) {
+    fun connectByEdge(nodeToConnect: DrawableNode, weighBox: WeighBox) {
         weighBox.edge = super.connect(nodeToConnect, Edge.DEFAULT_WEIGHT)
 
         connectedTo[nodeToConnect.id] = nodeToConnect
@@ -44,4 +45,10 @@ class DrawableNode (val id: String, var centerX: Float, var centerY: Float):
         nodeToConnect.connectedTo[id] = this
         nodeToConnect.connectedByEdge[id] = weighBox
     }
+
+    fun increaseEdgeWeight(node : DrawableNode, amount: Double){
+        connectedByEdge[node.id]?.increaseWeight(amount)
+    }
+
+
 }

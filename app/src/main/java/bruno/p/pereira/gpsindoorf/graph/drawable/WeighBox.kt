@@ -9,13 +9,14 @@ import bruno.p.pereira.gpsindoorf.graph.data.Edge.Companion.DEFAULT_WEIGHT
 class WeighBox (val id: Int, val nodeA: DrawableNode,
                 val nodeB: DrawableNode) {
 
+
     val boundaries: RectF = RectF(0f, 0f, 0f, 0f)
     val touchableArea: RectF = RectF(0f, 0f, 0f, 0f)
     private val spacing: Int = 20
     var edge: Edge? = null
 
     fun connectTo(drawableNode: DrawableNode, paint: Paint, weight: Double = DEFAULT_WEIGHT) {
-        nodeA.connectByEdge(drawableNode, this, weight)
+        nodeA.connectByEdge(drawableNode, this)
         updateWeightBox(paint)
     }
 
@@ -44,5 +45,13 @@ class WeighBox (val id: Int, val nodeA: DrawableNode,
     fun decreaseWeight(amount: Double) {
         val edge = this.edge ?: return
         edge.weight -= amount
+    }
+
+
+
+
+    companion object{
+
+        val NEGATIVEWEIGHT:Double = -1.0
     }
 }
