@@ -3,35 +3,82 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.graph.GraphFragment">
+    android:layout_height="match_parent">
 
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="119dp"
-        android:layout_height="98dp"
-        android:text="TextView"
+    <bruno.p.pereira.gpsindoorf.graph.drawable.DrawableGraphView
+        android:id="@+id/drawableGraphView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.681" />
+
+    <Button
+        android:id="@+id/btRun"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:onClick="runAlgorithm"
+        android:text="Run"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floating_graph"
+    <Button
+        android:id="@+id/btRedo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginBottom="68dp"
-        android:contentDescription="@string/contextDescriptionFloatingButton"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="48dp"
+        android:onClick="redoAlgorithm"
+        android:text="Redo"
+        app:layout_constraintBottom_toBottomOf="@+id/btRun"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.89"
+        app:layout_constraintHorizontal_bias="0.885"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_graph"
-        app:backgroundTint="@color/purple_500"
-        app:tint="@color/white"
-        tools:ignore="SpeakableTextPresentCheck" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/btRemove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:onClick="removeNode"
+        android:text="removeNode"
+        app:layout_constraintEnd_toEndOf="@+id/btUndo"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/btUndo"
+        app:layout_constraintTop_toBottomOf="@+id/btUndo" />
+
+    <Button
+        android:id="@+id/btUndo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:onClick="undo"
+        android:text="Undo"
+        app:layout_constraintBottom_toBottomOf="@+id/btRun"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.098"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/btReset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:onClick="reset"
+        android:text="Reset"
+        app:layout_constraintBottom_toBottomOf="@+id/btRemove"
+        app:layout_constraintEnd_toEndOf="@+id/btRedo"
+        app:layout_constraintStart_toStartOf="@+id/btRedo"
+        app:layout_constraintTop_toBottomOf="@+id/btRedo" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
