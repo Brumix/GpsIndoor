@@ -5,12 +5,14 @@ import bruno.p.pereira.gpsindoorf.graph.drawable.DrawableNode
 import java.util.*
 
 
-class DrawableGraph:
+class DrawableGraph :
     Graph<DrawableNode> {
 
     private val drawableNodes: LinkedList<DrawableNode> = LinkedList()
+    var maxId: Int = 1
 
-    override fun getNodes() : LinkedList<DrawableNode> {
+
+    override fun getNodes(): LinkedList<DrawableNode> {
         return drawableNodes
     }
 
@@ -24,6 +26,7 @@ class DrawableGraph:
 
     fun addNode(node: DrawableNode) {
         drawableNodes.add(node)
+        maxId++
     }
 
     fun removeNode(node: DrawableNode) {

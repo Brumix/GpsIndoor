@@ -5,18 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <bruno.p.pereira.gpsindoorf.graph.drawable.DrawableGraphView
-        android:id="@+id/drawableGraphView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.681" />
-
     <Button
         android:id="@+id/btRun"
         android:layout_width="wrap_content"
@@ -80,5 +68,17 @@
         app:layout_constraintEnd_toEndOf="@+id/btRedo"
         app:layout_constraintStart_toStartOf="@+id/btRedo"
         app:layout_constraintTop_toBottomOf="@+id/btRedo" />
+
+
+    <bruno.p.pereira.gpsindoorf.graph.drawable.DrawableGraphView
+        android:id="@+id/drawableGraphView"
+        android:layout_width="match_parent"
+        android:layout_height="820dp"
+        android:layout_marginBottom="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

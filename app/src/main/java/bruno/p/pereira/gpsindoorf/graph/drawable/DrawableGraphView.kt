@@ -10,6 +10,8 @@ import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputConnection
 import androidx.core.content.ContextCompat
 import bruno.p.pereira.gpsindoorf.R
 import bruno.p.pereira.gpsindoorf.graph.algorithm.Djikstra
@@ -39,6 +41,7 @@ class DrawableGraphView : View {
     private var readyToAddEdges: Boolean = false
     private var readyToAddStartAndEndNodes: Boolean = false
     private var readyToRunAgain: Boolean = false
+    private var isInsit: Boolean = true
 
     private var movingNode: Boolean = false
     private var initalMovePosition = Pair(-1f, -1f)
@@ -51,8 +54,14 @@ class DrawableGraphView : View {
     private val paint = Paint()
     private val paintManager = DrawableGraphViewPaint(context, paint)
 
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
+        if (isInsit)
+            setup()
+
+
         paintManager.drawBoundaries(width, height, canvas)
         paintManager.drawEdges(weighBoxes, canvas)
         paintManager.drawNodes(graph.getNodes(), canvas)
@@ -67,8 +76,6 @@ class DrawableGraphView : View {
         paintManager.drawStartAndEndPoints(startPoint, endPoint, canvas)
         paintManager.drawTextNodes(graph.getNodes(), canvas)
         paintManager.drawSelectedNode(selectedNode, canvas)
-
-
     }
 
 
@@ -108,7 +115,7 @@ class DrawableGraphView : View {
                     }
                 }
 
-                if (selectedNode == null) {
+                if (selectedNode == null) { //user increase weight
                     val edge = getEdgeBoxAtPoint(x, y)
                     if (edge != null) {
                         increaseEdgeWeight(edge)
@@ -154,13 +161,22 @@ class DrawableGraphView : View {
         return true
     }
 
+    private fun setup() {
+        isInsit = false
+        val a = DrawableNode("1", width / 2f, height / 2f)
+        val b = DrawableNode("2", width / 3f, height / 3f)
+        addDrawableNode(a)
+        addDrawableNode(b)
+        a.increaseEdgeWeight(b,12.0)
+        addDrawableEdge(a, b)
+    }
+
     private fun deselectNode() {
         selectedNode = null
     }
 
-
     fun runAlgorithm() {
-        if (startPoint == null || endPoint == null) return
+        if (!isReadyToRun()) return
 
         pathNodesOrder.clear()
 
@@ -211,13 +227,14 @@ class DrawableGraphView : View {
 
     private fun getMaxIdNodes(): String {
         if (graph.getNodes().isNotEmpty()) {
-            var max = graph.getNodes()[0].id
+           /* var max = graph.getNodes()[0].id
             for (i in graph.getNodes()) {
-                if (max < i.id) {
+                if (max.toInt() < i.id.toInt()) {
                     max = i.id
                 }
             }
-            return max.toInt().plus(1).toString()
+            return max.toInt().plus(1).toString()*/
+            return graph.maxId.toString()
         }
         return "1"
     }
@@ -264,7 +281,11 @@ class DrawableGraphView : View {
         invalidate()
     }
 
-    private fun addDrawableEdge(nodeA: DrawableNode, nodeB: DrawableNode, history: Boolean = true) {
+    private fun addDrawableEdge(
+        nodeA: DrawableNode,
+        nodeB: DrawableNode,
+        history: Boolean = true
+    ) {
         if (nodeA.connectedTo.size < graph.getNodes().size - 1) {
             weighBoxes.add(WeighBox(weighBoxes.size + 1, nodeA, nodeB))
             weighBoxes.last().connectTo(nodeB, paint)
