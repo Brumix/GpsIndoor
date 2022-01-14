@@ -1,10 +1,15 @@
 package models
 
+const (
+	DateLayout = "2006-Jan-02 Monday 03:04:05"
+)
+
 type Location struct {
 	Place     string `json:"place"`
 	Division  string `json:"division"`
 	Longitude string `json:"longitude"`
 	Latitude  string `json:"latitude"`
+	LocTime   string `json:"loc_time"`
 }
 
 type DTOLocation struct {
@@ -16,11 +21,12 @@ type DTOLocation struct {
 }
 
 type Beacon struct {
-	Id   int      `json:"id"`
-	Name string   `json:"name"`
-	Mac  string   `json:"mac"`
-	Rssi int      `json:"rssi"`
-	Loc  Location `json:"-"`
+	Id     int        `json:"id"`
+	Name   string     `json:"name"`
+	Mac    string     `json:"mac"`
+	Rssi   int        `json:"rssi"`
+	RecLoc Location   `json:"-"`
+	HisLoc []Location `json:"-"`
 }
 
 type DTOBeacon struct {
