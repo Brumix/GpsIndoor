@@ -10,8 +10,6 @@ import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputConnection
 import androidx.core.content.ContextCompat
 import bruno.p.pereira.gpsindoorf.R
 import bruno.p.pereira.gpsindoorf.graph.algorithm.Djikstra
