@@ -1,6 +1,7 @@
 package bruno.p.pereira.gpsindoorf
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.findNavController
@@ -8,6 +9,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import bruno.p.pereira.gpsindoorf.databinding.ActivityMainBinding
+import bruno.p.pereira.gpsindoorf.services.HttpRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
@@ -37,5 +39,6 @@ class MainActivity : AppCompatActivity() {
 
         val config = AppBarConfiguration(navController.graph)
         findViewById<Toolbar>(R.id.action_bar).setupWithNavController(navController,config)
+        HttpRequest.startActionGETUser(this)
     }
 }
