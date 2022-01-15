@@ -20,7 +20,7 @@ var beaconsGeneric = []models.Beacon{
 	{3, "beacon-3", "F9-48-F4-E7-13-4B", -50, models.Location{}, []models.Location{}}}
 
 var master = []models.Master{
-	//{"RSR1.201013.001", beaconsGeneric},
+	{"RSR1.201013.001", beaconsGeneric},
 }
 
 var MasterId = len(beaconsGeneric)
