@@ -21,8 +21,10 @@ import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 
 
-private const val URL = "https://10e1-188-250-33-145.ngrok.io"
+private const val URL = "https://2a0e-188-250-33-145.ngrok.io"
 
+
+private const val ACTION_GET_USER = "bruno.p.pereira.gpsindoorf.services.action.GET_USER"
 private const val ACTION_GET_BEACONS = "bruno.p.pereira.gpsindoorf.services.action.GET_BEACONS"
 private const val ACTION_GET_LOCATION = "bruno.p.pereira.gpsindoorf.services.action.GET_LOCATION"
 private const val ACTION_POST_BEACONS = "bruno.p.pereira.gpsindoorf.services.action.POST_BEACONS"
@@ -48,6 +50,8 @@ class HttpRequest : IntentService("HttpRequest") {
 
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
+            ACTION_GET_USER -> handleActionGETUser()
+
             ACTION_GET_BEACONS -> {
                 val param1 = intent.getStringExtra(MACBEACON)!!
                 handleActionGETBeacon(param1)
@@ -75,6 +79,27 @@ class HttpRequest : IntentService("HttpRequest") {
         }
     }
 
+    private fun handleActionGETUser() {
+        val url = "$URL/beacon/user/${Build.ID}"
+
+        Log.v(TAG, "[URL] $url")
+        val queue = SingletonVolleyRequestQueue.getInstance(this.applicationContext).requestQueue
+        // Create Request with Listeners:
+        // GET METHOD
+        val request = StringRequest(
+            Request.Method.GET, url,
+            { //Handle Response
+                    response ->
+                        Log.v(TAG, "[HTTPREQUEST] User Added to the system")
+            },
+            { //Handle Error
+                    error ->
+                Toast.makeText(this, "ERROR : ENDPOINT NOT FOUND", Toast.LENGTH_LONG).show()
+                Log.e(TAG, "launchAsyncVolleyHttpRequest(): Response.Listener Error=$error")
+            }
+        )
+        queue.add(request)
+    }
 
     private fun handleActionGETBeacon(param1: String) {
 
@@ -156,10 +181,8 @@ class HttpRequest : IntentService("HttpRequest") {
             },
             { //Handle Error
                     error ->
-                Log.e(
-                    TAG,
-                    "launchAsyncVolleyHttpRequest(): Response.Listener Error=$error"
-                )
+                Toast.makeText(this, "ERROR : ENDPOINT NOT FOUND", Toast.LENGTH_LONG).show()
+                Log.e(TAG, "launchAsyncVolleyHttpRequest(): Response.Listener Error=$error")
             })
 
         queue.add(request)
@@ -189,6 +212,7 @@ class HttpRequest : IntentService("HttpRequest") {
             },
             { //Handle Error
                     error ->
+                Toast.makeText(this, "ERROR : ENDPOINT NOT FOUND", Toast.LENGTH_LONG).show()
                 Log.e(
                     TAG,
                     "launchAsyncVolleyHttpRequest(): Response.Listener Error=$error"
@@ -207,7 +231,6 @@ class HttpRequest : IntentService("HttpRequest") {
         for (i in listBeacons)
             mapDB[i.mac] = i
 
-
         if (mac != "") {
             val info: Beacon = gson.fromJson(resp, Beacon::class.java)
             if (mapDB.containsKey(info.mac))
@@ -219,7 +242,6 @@ class HttpRequest : IntentService("HttpRequest") {
         } else {
             val info: Array<Beacon> =
                 gson.fromJson(resp, object : TypeToken<Array<Beacon>>() {}.type)
-
             for (i in info) {
                 if (!mapDB.containsKey(i.mac)) {
                     i.id = db.getAllBeacons().size + 1
@@ -232,6 +254,8 @@ class HttpRequest : IntentService("HttpRequest") {
     }
 
     private fun getResponseGETLocation(resp: String, mac: String) {
+
+
 
         val gson = Gson()
         val listLocations: MutableList<DtoLocation> = this.db.getAllLocations()
@@ -253,6 +277,7 @@ class HttpRequest : IntentService("HttpRequest") {
             val info: Array<DtoLocation> =
                 gson.fromJson(resp, object : TypeToken<Array<DtoLocation>>() {}.type)
 
+            Log.v(TAG,"${info.size}")
             for (i in info) {
                 if (mapDB.containsKey(i.mac)) {
                     db.updateLocation(i)
@@ -268,6 +293,15 @@ class HttpRequest : IntentService("HttpRequest") {
 
 
     companion object {
+
+        @JvmStatic
+        fun startActionGETUser(context: Context) {
+            val intent = Intent(context, HttpRequest::class.java).apply {
+                action = ACTION_GET_USER
+            }
+            context.startService(intent)
+        }
+
 
         @JvmStatic
         fun startActionGETBeacons(context: Context, macBeacon: String = "") {

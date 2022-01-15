@@ -10,6 +10,7 @@ import (
 
 var locBeacon0 = models.Location{Place: "Universidade ", Division: "Sala 101", Longitude: "0", Latitude: "0", LocTime: time.Now().Format(models.DateLayout)}
 var locBeacon1 = models.Location{Place: "Universidade", Division: "Sala 102", Longitude: "0", Latitude: "0", LocTime: time.Now().Format(models.DateLayout)}
+
 var beaconsGeneric = []models.Beacon{
 	{Name: "beacon-0", Mac: "54-AX-A2-D4-15-89", Rssi: -50,
 		RecLoc: locBeacon0, HisLoc: []models.Location{locBeacon0}},
@@ -19,17 +20,35 @@ var beaconsGeneric = []models.Beacon{
 	{3, "beacon-3", "F9-48-F4-E7-13-4B", -50, models.Location{}, []models.Location{}}}
 
 var master = []models.Master{
-	{"RSR1.201013.001", beaconsGeneric},
+	//{"RSR1.201013.001", beaconsGeneric},
 }
 
 var MasterId = len(beaconsGeneric)
+
+func GETCreateUser(context *gin.Context) {
+	var idUser, exist = checkUser(context)
+	if !exist {
+		return
+	}
+	var _, havaSomething = idUserBeacons(idUser)
+	if havaSomething {
+		return
+	}
+	master = append(master, models.Master{
+		ID: idUser, Beacon: []models.Beacon{},
+	})
+}
 
 func GetAllBeacons(context *gin.Context) {
 	var idUser, exist = checkUser(context)
 	if !exist {
 		return
 	}
-	var result = idUserBeacons(idUser)
+	var result, havaSomething = idUserBeacons(idUser)
+	if !havaSomething {
+		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
+		return
+	}
 
 	context.JSON(http.StatusOK, result)
 }
@@ -40,7 +59,12 @@ func GetBeaconByMac(context *gin.Context) {
 	if !exist {
 		return
 	}
-	var result = idUserBeacons(idUser)
+
+	var result, havaSomething = idUserBeacons(idUser)
+	if !havaSomething {
+		context.JSON(http.StatusOK, gin.H{"msg": "Invalid id"})
+		return
+	}
 
 	macBeacon, existValue := context.Params.Get("mac")
 	if !existValue {
@@ -62,18 +86,23 @@ func PostAddBeacon(context *gin.Context) {
 	if !exist {
 		return
 	}
-	var result = idUserBeacons(idUser)
+	var result, havaSomething = idUserBeacons(idUser)
+	if !havaSomething {
+		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
+		return
+	}
+
 	if result != nil {
 		master = append(master, models.Master{
 			ID: idUser, Beacon: []models.Beacon{},
 		})
 	}
-	result = idUserBeacons(idUser)
+	result, _ = idUserBeacons(idUser)
 
 	var bodyBeacon models.Beacon
 	errDTO := context.ShouldBind(&bodyBeacon)
 	if errDTO != nil {
-		context.JSON(http.StatusOK, gin.H{"msg": "Invalid id"})
+		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
 		return
 	}
 	for _, beacon := range *result {
@@ -85,22 +114,27 @@ func PostAddBeacon(context *gin.Context) {
 	bodyBeacon.Id = MasterId
 	MasterId++
 	*result = append(*result, bodyBeacon)
-	context.JSON(http.StatusOK, gin.H{"msg": "Added with success!!"})
+	context.JSON(http.StatusBadRequest, gin.H{"msg": "Added with success!!"})
 }
+
 func PostAddLoc(context *gin.Context) {
 
 	var idUser, exist = checkUser(context)
 	if !exist {
 		return
 	}
-	var result = idUserBeacons(idUser)
+	var result, havaSomething = idUserBeacons(idUser)
+	if !havaSomething {
+		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
+		return
+	}
 
 	var loc models.DTOLocation
 	errDTO := context.ShouldBind(&loc)
 	fmt.Println(loc)
 	if errDTO != nil {
 		fmt.Println(errDTO)
-		context.JSON(http.StatusOK, gin.H{"msg": "Invalid id"})
+		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
 		return
 	}
 
@@ -120,7 +154,7 @@ func PostAddLoc(context *gin.Context) {
 			return
 		}
 	}
-	context.JSON(http.StatusOK, gin.H{"msg": "Invalid id"})
+	context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
 }
 
 func GetAllLocByMac(context *gin.Context) {
@@ -128,13 +162,16 @@ func GetAllLocByMac(context *gin.Context) {
 	if !exist {
 		return
 	}
-	var result = idUserBeacons(idUser)
+	var result, havaSomething = idUserBeacons(idUser)
+	if !havaSomething {
+		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
+		return
+	}
 
 	var dto []models.DTOLocation
 	var currentDto models.DTOLocation
 	for _, beacon := range *result {
 		if beacon.RecLoc.Place != "" && beacon.RecLoc.Division != "" {
-
 			currentDto.Mac = beacon.Mac
 			currentDto.PLace = beacon.RecLoc.Place
 			currentDto.Division = beacon.RecLoc.Division
@@ -143,6 +180,9 @@ func GetAllLocByMac(context *gin.Context) {
 
 			dto = append(dto, currentDto)
 		}
+	}
+	if dto == nil {
+		dto = []models.DTOLocation{}
 	}
 	context.JSON(http.StatusOK, dto)
 
@@ -154,11 +194,15 @@ func GetLocByMac(context *gin.Context) {
 	if !exist {
 		return
 	}
-	var result = idUserBeacons(idUser)
+	var result, havaSomething = idUserBeacons(idUser)
+	if !havaSomething {
+		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
+		return
+	}
 
 	macBeacon, existValue := context.Params.Get("mac")
 	if !existValue {
-		context.JSON(http.StatusOK, gin.H{"msg": "Invalid id"})
+		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
 		return
 	}
 	for _, beacon := range *result {
@@ -175,11 +219,15 @@ func GETHisLoc(context *gin.Context) {
 	if !exist {
 		return
 	}
-	var result = idUserBeacons(idUser)
+	var result, havaSomething = idUserBeacons(idUser)
+	if !havaSomething {
+		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
+		return
+	}
 
 	macBeacon, existValue := context.Params.Get("mac")
 	if !existValue {
-		context.JSON(http.StatusOK, gin.H{"msg": "Invalid id"})
+		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
 		return
 	}
 	for _, beacon := range *result {
@@ -190,19 +238,19 @@ func GETHisLoc(context *gin.Context) {
 	}
 }
 
-func idUserBeacons(id string) *[]models.Beacon {
+func idUserBeacons(id string) (*[]models.Beacon, bool) {
 	for i, m := range master {
 		if m.ID == id {
-			return &master[i].Beacon
+			return &master[i].Beacon, true
 		}
 	}
-	return nil
+	return nil, false
 }
 
 func checkUser(context *gin.Context) (string, bool) {
 	idUser, existValueId := context.Params.Get("id")
 	if !existValueId {
-		context.JSON(http.StatusOK, gin.H{"msg": "Invalid id"})
+		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
 		return "", false
 	}
 	return idUser, true
