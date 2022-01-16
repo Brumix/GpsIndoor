@@ -14,6 +14,9 @@ func Routes(router *gin.Engine) {
 
 	router.GET("/beacon/:id/loc", controller.GetAllLocByMac)
 	router.GET("/beacon/:id/loc/:mac", controller.GetLocByMac)
+	router.DELETE("/beacon/:id/loc/:mac", controller.DELETELocByMac)
+	router.DELETE("/beacon/:id/loc", controller.DELETELocByMac)
+
 	router.POST("/beacon/:id/loc", controller.PostAddLoc)
 	router.GET("/beacon/:id/loc/hist/:mac", controller.GETHisLoc)
 

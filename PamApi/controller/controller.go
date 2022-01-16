@@ -215,6 +215,37 @@ func GetLocByMac(context *gin.Context) {
 	}
 }
 
+func DELETELocByMac(context *gin.Context) {
+
+	var idUser, exist = checkUser(context)
+	if !exist {
+		return
+	}
+	var result, havaSomething = idUserBeacons(idUser)
+	if !havaSomething {
+		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
+		return
+	}
+
+	macBeacon, existValue := context.Params.Get("mac")
+	if !existValue {
+		for i := range *result {
+			(&(*result)[i]).RecLoc = models.Location{}
+		}
+		context.JSON(http.StatusOK, models.Location{})
+		return
+	} else {
+		for i, beacon := range *result {
+			if beacon.Mac == macBeacon {
+				(&(*result)[i]).RecLoc = models.Location{}
+				context.JSON(http.StatusOK, models.Location{})
+				return
+			}
+		}
+	}
+	context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
+}
+
 func GETHisLoc(context *gin.Context) {
 
 	var idUser, exist = checkUser(context)

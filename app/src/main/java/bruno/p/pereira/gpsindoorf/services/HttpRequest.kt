@@ -18,7 +18,7 @@ import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 
 
-private const val URL = "https://38b6-188-250-33-145.ngrok.io"
+private const val URL = "https://1a6c-188-250-33-145.ngrok.io"
 
 
 private const val ACTION_GET_USER = "bruno.p.pereira.gpsindoorf.services.action.GET_USER"
@@ -26,6 +26,7 @@ private const val ACTION_GET_BEACONS = "bruno.p.pereira.gpsindoorf.services.acti
 private const val ACTION_GET_LOCATION = "bruno.p.pereira.gpsindoorf.services.action.GET_LOCATION"
 private const val ACTION_POST_BEACONS = "bruno.p.pereira.gpsindoorf.services.action.POST_BEACONS"
 private const val ACTION_POST_LOC = "bruno.p.pereira.gpsindoorf.services.action.POST_LOC"
+private const val ACTION_DELETE_LOC = "bruno.p.pereira.gpsindoorf.services.action.DELETE_LOC"
 private const val ACTION_GET_HIST = "bruno.p.pereira.gpsindoorf.services.action.GET_HIST"
 
 
@@ -49,7 +50,6 @@ class HttpRequest : IntentService("HttpRequest") {
     override fun onHandleIntent(intent: Intent?) {
         when (intent?.action) {
             ACTION_GET_USER -> handleActionGETUser()
-
             ACTION_GET_BEACONS -> {
                 val param1 = intent.getStringExtra(MACBEACON)!!
                 handleActionGETBeacon(param1)
@@ -73,6 +73,10 @@ class HttpRequest : IntentService("HttpRequest") {
                 val longuitude = intent.getStringExtra(LONGUITUDELOC)!!
                 val latitude = intent.getStringExtra(LATITUDELOC)!!
                 handleActionPOSTLoc(DtoLocation(mac, place, division, longuitude, latitude))
+            }
+            ACTION_DELETE_LOC -> {
+                val mac = intent.getStringExtra(MACBEACON)!!
+                handleActionDELETELoc(mac)
             }
             ACTION_GET_HIST -> {
                 val mac = intent.getStringExtra(MACBEACON)!!
@@ -248,6 +252,30 @@ class HttpRequest : IntentService("HttpRequest") {
         queue.add(request)
     }
 
+    private fun handleActionDELETELoc(mac: String) {
+        var url = "$URL/beacon/${Build.ID}/loc"
+
+        if(mac != "")
+            url += "/$mac"
+
+        Log.v(TAG, "[URL] $url")
+        val queue = SingletonVolleyRequestQueue.getInstance(this.applicationContext).requestQueue
+        // Create Request with Listeners:
+        // GET METHOD
+        val request = StringRequest(
+            Request.Method.DELETE, url,
+            { //Handle Response
+                    response ->
+                Log.v(TAG, "[HTTPREQUEST] Loc deleted from cloud !!")
+            },
+            { //Handle Error
+                    error ->
+                Toast.makeText(this, "ERROR : ENDPOINT NOT FOUND", Toast.LENGTH_LONG).show()
+                Log.e(TAG, "launchAsyncVolleyHttpRequest(): Response.Listener Error=$error")
+            }
+        )
+        queue.add(request)
+    }
 
     private fun getResponseGETBeacons(resp: String, mac: String) {
 
@@ -318,16 +346,12 @@ class HttpRequest : IntentService("HttpRequest") {
         val gson = Gson()
         val info: Array<DtoLocation> =
             gson.fromJson(resp, object : TypeToken<Array<DtoLocation>>() {}.type)
-        if(info.isEmpty())
+        if (info.isEmpty())
             return
-        Log.v(TAG+"t",mac)
-        Log.v(TAG+"t", db.getAllLocations().toString())
         db.deleteLocationByMac(mac)
-        Log.v(TAG+"t", db.getAllLocations().toString())
         for (i in info) {
             i.mac = mac
             db.insertLocation(i)
-            Log.v(TAG, db.getFirstLocationbyMac(mac).toString())
         }
     }
 
@@ -395,5 +419,15 @@ class HttpRequest : IntentService("HttpRequest") {
             }
             context.startService(intent)
         }
+
+        @JvmStatic
+        fun startActionDELETELoc(context: Context, mac: String = "") {
+            val intent = Intent(context, HttpRequest::class.java).apply {
+                action = ACTION_DELETE_LOC
+                putExtra(MACBEACON, mac)
+            }
+            context.startService(intent)
+        }
+
     }
 }

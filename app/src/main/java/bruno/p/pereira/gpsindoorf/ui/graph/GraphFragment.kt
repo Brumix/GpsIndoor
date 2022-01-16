@@ -1,6 +1,6 @@
 package bruno.p.pereira.gpsindoorf.ui.graph
 
-import android.content.DialogInterface
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +13,7 @@ import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.databinding.FragmentGraphBinding
 import bruno.p.pereira.gpsindoorf.graph.drawable.DrawableGraphView
 import bruno.p.pereira.gpsindoorf.graph.manager.ActionsManager
+import bruno.p.pereira.gpsindoorf.services.HttpRequest
 
 
 class GraphFragment : Fragment() {
@@ -59,6 +60,8 @@ class GraphFragment : Fragment() {
         builder.setMessage(getString(R.string.confirm_delete))
         builder.setPositiveButton(getString(R.string.yes)) { _, _ ->
             drawView.reset()
+            this.db.deleteALLLocation()
+            HttpRequest.startActionDELETELoc(this.requireContext())
 
         }
         builder.setNeutralButton(getString(R.string.cancel)) { _, _ -> }

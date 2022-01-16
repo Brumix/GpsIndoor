@@ -156,7 +156,7 @@ class DrawableGraphView : View {
                             Pair(x, y)
                         )
                     )
-                    saveNewLocation(selectedNode!!.mac,x,y)
+                    saveNewLocation(selectedNode!!.mac, x, y)
                     initalMovePosition = Pair(-1f, -1f)
                     movingNode = false
                 }
@@ -201,14 +201,14 @@ class DrawableGraphView : View {
         //addDrawableEdge(a, b)
     }
 
-    private fun saveNewLocation(mac:String, x:Float,y:Float){
+    private fun saveNewLocation(mac: String, x: Float, y: Float) {
         val dto = this.db.getFirstLocationbyMac(mac) ?: return
         dto.latitude = y.toString()
         dto.longitude = x.toString()
         Log.v(TAG, dto.toString())
         this.db.updateLocation(dto)
-        HttpRequest.startActionPOSTLoc(context,dto)
-        Log.v(TAG,"[DRAWABLEGRAPHVIEW] DTO updated ${dto.mac}")
+        HttpRequest.startActionPOSTLoc(context, dto)
+        Log.v(TAG, "[DRAWABLEGRAPHVIEW] DTO updated ${dto.mac}")
     }
 
     private fun deselectNode() {
@@ -303,7 +303,9 @@ class DrawableGraphView : View {
 
     fun removeSelectedNode() {
         val selected = selectedNode ?: return
+        removeNodeInfo(selected.mac)
         removeNode(selected)
+
     }
 
     private fun removeNode(drawableNode: DrawableNode, history: Boolean = true) {
@@ -640,6 +642,12 @@ class DrawableGraphView : View {
 
     private fun redoEndPoint(action: ActionEndPoint) {
         selectEndPoint(action.node)
+    }
+
+    private fun removeNodeInfo(mac:String){
+
+        this.db.deleteLocationByMac(mac)
+        HttpRequest.startActionDELETELoc(this.context,mac)
     }
 
 }
