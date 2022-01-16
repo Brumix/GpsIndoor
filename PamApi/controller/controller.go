@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-var locBeacon0 = models.Location{Place: "Universidade ", Division: "Sala 101", Longitude: "0", Latitude: "0", LocTime: time.Now().Format(models.DateLayout)}
-var locBeacon1 = models.Location{Place: "Universidade", Division: "Sala 102", Longitude: "0", Latitude: "0", LocTime: time.Now().Format(models.DateLayout)}
+var locBeacon0 = models.Location{Place: "Universidade ", Division: "Sala 101", Longitude: "540", Latitude: "540", LocTime: time.Now().Format(models.DateLayout)}
+var locBeacon1 = models.Location{Place: "Universidade", Division: "Sala 102", Longitude: "360", Latitude: "360", LocTime: time.Now().Format(models.DateLayout)}
 
 var beaconsGeneric = []models.Beacon{
 	{Name: "beacon-0", Mac: "54-AX-A2-D4-15-89", Rssi: -50,
@@ -20,7 +20,7 @@ var beaconsGeneric = []models.Beacon{
 	{3, "beacon-3", "F9-48-F4-E7-13-4B", -50, models.Location{}, []models.Location{}}}
 
 var master = []models.Master{
-	//{"RSR1.201013.001", beaconsGeneric},
+	{"RSR1.201013.001", beaconsGeneric},
 }
 
 var MasterId = len(beaconsGeneric)
@@ -177,6 +177,7 @@ func GetAllLocByMac(context *gin.Context) {
 			currentDto.Division = beacon.RecLoc.Division
 			currentDto.Longitude = beacon.RecLoc.Longitude
 			currentDto.Latitude = beacon.RecLoc.Latitude
+			currentDto.LocTime = beacon.RecLoc.LocTime
 
 			dto = append(dto, currentDto)
 		}
@@ -184,6 +185,7 @@ func GetAllLocByMac(context *gin.Context) {
 	if dto == nil {
 		dto = []models.DTOLocation{}
 	}
+
 	context.JSON(http.StatusOK, dto)
 
 }
@@ -230,12 +232,19 @@ func GETHisLoc(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
 		return
 	}
+
 	for _, beacon := range *result {
 		if beacon.Mac == macBeacon {
-			context.JSON(http.StatusOK, beacon.HisLoc)
+			if beacon.HisLoc == nil {
+				context.JSON(http.StatusOK, []models.DTOLocation{})
+				return
+			}
+			context.JSON(http.StatusOK, reverseDto(beacon.HisLoc))
 			return
 		}
 	}
+	context.JSON(http.StatusOK, []models.DTOLocation{})
+	return
 }
 
 func idUserBeacons(id string) (*[]models.Beacon, bool) {
@@ -254,4 +263,11 @@ func checkUser(context *gin.Context) (string, bool) {
 		return "", false
 	}
 	return idUser, true
+}
+
+func reverseDto(input []models.Location) []models.Location {
+	if len(input) == 0 {
+		return input
+	}
+	return append(reverseDto(input[1:]), input[0])
 }

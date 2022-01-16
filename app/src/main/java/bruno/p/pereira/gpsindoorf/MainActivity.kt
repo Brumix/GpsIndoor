@@ -40,5 +40,6 @@ class MainActivity : AppCompatActivity() {
         val config = AppBarConfiguration(navController.graph)
         findViewById<Toolbar>(R.id.action_bar).setupWithNavController(navController,config)
         HttpRequest.startActionGETUser(this)
+      //  TODO("FIXED THE ADD LOCATION")
     }
 }

@@ -50,16 +50,19 @@ class AddLocationFragment : Fragment() {
         binding.btSaveLocationAL.setOnClickListener {
             val division = binding.etDivisionAL.text.toString()
             val place = binding.etPlaceAL.text.toString()
+
+            if (division =="" || place=="") return@setOnClickListener
+
             val dto = DtoLocation(beaconMac, place, division, "0", "0")
 
             HttpRequest.startActionPOSTLoc(context!!, dto)
             loc = db.getFirstLocationbyMac(dto.mac)
             if (loc != null) {
-                Log.v(TAG,"Update")
+                Log.v(TAG,"[ADDLOCATION] Update Location")
                 db.updateLocation(dto)
             }
             else {
-                Log.v(TAG,"Insert")
+                Log.v(TAG,"[ADDLOCATION] Insert Location")
                 db.insertLocation(dto)
             }
 

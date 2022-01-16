@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"projects/PAmAPI/routes"
-	_ "projects/PAmAPI/routes"
 )
 
 func main() {
@@ -13,5 +12,4 @@ func main() {
 	routes.Routes(router)
 
 	_ = router.Run()
-
 }
