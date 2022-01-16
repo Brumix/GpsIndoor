@@ -6,13 +6,10 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import androidx.fragment.app.activityViewModels
 import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.models.Beacon
 import bruno.p.pereira.gpsindoorf.models.DtoLocation
-import bruno.p.pereira.gpsindoorf.models.Location
-import bruno.p.pereira.gpsindoorf.ui.sync.SyncViewModel
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
@@ -21,7 +18,7 @@ import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 
 
-private const val URL = "https://2a0e-188-250-33-145.ngrok.io"
+private const val URL = "https://38b6-188-250-33-145.ngrok.io"
 
 
 private const val ACTION_GET_USER = "bruno.p.pereira.gpsindoorf.services.action.GET_USER"
@@ -29,6 +26,7 @@ private const val ACTION_GET_BEACONS = "bruno.p.pereira.gpsindoorf.services.acti
 private const val ACTION_GET_LOCATION = "bruno.p.pereira.gpsindoorf.services.action.GET_LOCATION"
 private const val ACTION_POST_BEACONS = "bruno.p.pereira.gpsindoorf.services.action.POST_BEACONS"
 private const val ACTION_POST_LOC = "bruno.p.pereira.gpsindoorf.services.action.POST_LOC"
+private const val ACTION_GET_HIST = "bruno.p.pereira.gpsindoorf.services.action.GET_HIST"
 
 
 // TODO: Rename parameters
@@ -76,6 +74,10 @@ class HttpRequest : IntentService("HttpRequest") {
                 val latitude = intent.getStringExtra(LATITUDELOC)!!
                 handleActionPOSTLoc(DtoLocation(mac, place, division, longuitude, latitude))
             }
+            ACTION_GET_HIST -> {
+                val mac = intent.getStringExtra(MACBEACON)!!
+                handleActionGETHist(mac)
+            }
         }
     }
 
@@ -89,8 +91,8 @@ class HttpRequest : IntentService("HttpRequest") {
         val request = StringRequest(
             Request.Method.GET, url,
             { //Handle Response
-                    response ->
-                        Log.v(TAG, "[HTTPREQUEST] User Added to the system")
+                    _ ->
+                Log.v(TAG, "[HTTPREQUEST] User Added to the system")
             },
             { //Handle Error
                     error ->
@@ -153,6 +155,29 @@ class HttpRequest : IntentService("HttpRequest") {
         queue.add(request)
     }
 
+    private fun handleActionGETHist(mac: String) {
+        val url = "$URL/beacon/${Build.ID}/loc/hist/$mac"
+
+
+        Log.v(TAG, "[URL] $url")
+        val queue = SingletonVolleyRequestQueue.getInstance(this.applicationContext).requestQueue
+        // Create Request with Listeners:
+        // GET METHOD
+        val request = StringRequest(
+            Request.Method.GET, url,
+            { //Handle Response
+                    response ->
+                getResponseGETHist(response, mac)
+            },
+            { //Handle Error
+                    error ->
+                Toast.makeText(this, "ERROR : ENDPOINT NOT FOUND", Toast.LENGTH_LONG).show()
+                Log.e(TAG, "launchAsyncVolleyHttpRequest(): Response.Listener Error=$error")
+            }
+        )
+        queue.add(request)
+    }
+
     private fun handleActionPOSTBeacon(beacon: Beacon) {
 
         if (beacon.id == -1 && beacon.rssi == -1) {
@@ -173,7 +198,7 @@ class HttpRequest : IntentService("HttpRequest") {
         val request = JsonObjectRequest(
             Request.Method.POST, url, body,
             { //Handle Response
-                    response ->
+                    _ ->
                 // val gson = Gson()
                 // val info: DtoLocation = gson.fromJson(response.toString(), DtoLocation::class.java)
                 Log.v(TAG, "[HTTPREQUEST]Beacon added with sucess to the cloud!!")
@@ -206,7 +231,7 @@ class HttpRequest : IntentService("HttpRequest") {
         val request = JsonObjectRequest(
             Request.Method.POST, url, body,
             { //Handle Response
-                    response ->
+                    _ ->
                 Log.v(TAG, "[HTTPREQUEST] Location added with sucess to the cloud!!")
 
             },
@@ -254,9 +279,6 @@ class HttpRequest : IntentService("HttpRequest") {
     }
 
     private fun getResponseGETLocation(resp: String, mac: String) {
-
-
-
         val gson = Gson()
         val listLocations: MutableList<DtoLocation> = this.db.getAllLocations()
         val mapDB = mutableMapOf<String, DtoLocation>()
@@ -277,7 +299,7 @@ class HttpRequest : IntentService("HttpRequest") {
             val info: Array<DtoLocation> =
                 gson.fromJson(resp, object : TypeToken<Array<DtoLocation>>() {}.type)
 
-            Log.v(TAG,"${info.size}")
+            Log.v(TAG, "${info.size}")
             for (i in info) {
                 if (mapDB.containsKey(i.mac)) {
                     db.updateLocation(i)
@@ -288,6 +310,22 @@ class HttpRequest : IntentService("HttpRequest") {
                 }
 
             }
+        }
+    }
+
+    private fun getResponseGETHist(resp: String, mac: String) {
+        val gson = Gson()
+        val info: Array<DtoLocation> =
+            gson.fromJson(resp, object : TypeToken<Array<DtoLocation>>() {}.type)
+        Log.v(TAG,resp)
+        if(info.isEmpty())
+            return
+
+        db.deleteLocationByMac(mac)
+        for (i in info) {
+            i.mac = mac
+            db.insertLocation(i)
+            Log.v(TAG, db.getFirstLocationbyMac(mac).toString())
         }
     }
 
@@ -321,6 +359,15 @@ class HttpRequest : IntentService("HttpRequest") {
             context.startService(intent)
         }
 
+        @JvmStatic
+        fun startActionGETHist(context: Context, macBeacon: String = "") {
+            val intent = Intent(context, HttpRequest::class.java).apply {
+                action = ACTION_GET_HIST
+                putExtra(MACBEACON, macBeacon)
+            }
+            context.startService(intent)
+        }
+
 
         @JvmStatic
         fun startActionPOSTBeacons(context: Context, beacon: Beacon) {
@@ -334,6 +381,7 @@ class HttpRequest : IntentService("HttpRequest") {
             context.startService(intent)
         }
 
+        @JvmStatic
         fun startActionPOSTLoc(context: Context, loc: DtoLocation) {
             val intent = Intent(context, HttpRequest::class.java).apply {
                 action = ACTION_POST_LOC

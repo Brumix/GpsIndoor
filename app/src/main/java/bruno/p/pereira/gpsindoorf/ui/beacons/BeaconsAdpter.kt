@@ -3,6 +3,7 @@ package bruno.p.pereira.gpsindoorf.ui.beacons
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import bruno.p.pereira.gpsindoorf.R
+import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.enums.BundleEnum
 import bruno.p.pereira.gpsindoorf.models.Beacon
@@ -25,6 +27,7 @@ class BeaconsAdpter(private val db: SQLiteHelper) :
 
     // TODO made this to live data or find a way to make this persistent
     private var listBeacons: MutableList<Beacon> = this.db.getAllBeacons()
+
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

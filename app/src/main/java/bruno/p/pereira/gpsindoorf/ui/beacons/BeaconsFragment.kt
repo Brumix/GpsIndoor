@@ -23,7 +23,6 @@ class BeaconsFragment : Fragment() {
 
     private val _beaconAdapt: BeaconsAdpter by lazy {
         BeaconsAdpter(db)
-
     }
 
 

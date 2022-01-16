@@ -28,6 +28,7 @@ class SQLiteHelper(context: Context) :
         private const val DIVISION = "division"
         private const val LONGITUDE = "longitude"
         private const val LATITUDE = "latitude"
+        private const val LOC_TIME = "loc_time"
 
 
     }
@@ -44,7 +45,8 @@ class SQLiteHelper(context: Context) :
                 + PLACE + " TEXT, "
                 + DIVISION + " TEXT, "
                 + LONGITUDE + " TEXT, "
-                + LATITUDE + " TEXT )")
+                + LATITUDE + " TEXT, "
+                + LOC_TIME + " TEXT )")
 
 
 
@@ -85,6 +87,8 @@ class SQLiteHelper(context: Context) :
         contentValues.put(DIVISION, dto.division)
         contentValues.put(LONGITUDE, dto.longitude)
         contentValues.put(LATITUDE, dto.latitude)
+        contentValues.put(LOC_TIME, dto.loc_time?:"-1")
+
 
         val success = db.insert(TBL_LOCATION, null, contentValues)
 
@@ -182,6 +186,7 @@ class SQLiteHelper(context: Context) :
         var divisonB: String
         var longuitudeB: String
         var latitudeB: String
+        var loc_timeB : String
 
         if (cursor.moveToFirst()) {
             do {
@@ -190,8 +195,48 @@ class SQLiteHelper(context: Context) :
                 divisonB = cursor.getString(cursor.getColumnIndex(DIVISION))
                 longuitudeB = cursor.getString(cursor.getColumnIndex(LONGITUDE))
                 latitudeB = cursor.getString(cursor.getColumnIndex(LATITUDE))
+                loc_timeB = cursor.getString(cursor.getColumnIndex(LOC_TIME))
 
-                val currentDto = DtoLocation(macB, placeB, divisonB, longuitudeB, latitudeB)
+                val currentDto = DtoLocation(macB, placeB, divisonB, longuitudeB, latitudeB,loc_timeB)
+                locList.add(currentDto)
+            } while (cursor.moveToNext())
+        }
+        return locList
+    }
+
+    @SuppressLint("Range")
+    fun getAllLocationbyMac(mac: String): ArrayList<DtoLocation> {
+        val locList: ArrayList<DtoLocation> = ArrayList()
+        val selectQuery = "SELECT * FROM $TBL_LOCATION WHERE mac = \'$mac\'"
+        val db = this.readableDatabase
+
+        val cursor: Cursor?
+
+        try {
+            cursor = db.rawQuery(selectQuery, null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            db.execSQL(selectQuery)
+            return ArrayList()
+        }
+
+        var macB: String
+        var placeB: String
+        var divisonB: String
+        var longuitudeB: String
+        var latitudeB: String
+        var locTimeB: String
+
+        if (cursor.moveToFirst()) {
+            do {
+                macB = cursor.getString(cursor.getColumnIndex(MAC))
+                placeB = cursor.getString(cursor.getColumnIndex(PLACE))
+                divisonB = cursor.getString(cursor.getColumnIndex(DIVISION))
+                longuitudeB = cursor.getString(cursor.getColumnIndex(LONGITUDE))
+                latitudeB = cursor.getString(cursor.getColumnIndex(LATITUDE))
+                locTimeB = cursor.getString(cursor.getColumnIndex(LOC_TIME))
+
+                val currentDto = DtoLocation(macB, placeB, divisonB, longuitudeB, latitudeB,locTimeB)
                 locList.add(currentDto)
             } while (cursor.moveToNext())
         }
@@ -218,6 +263,7 @@ class SQLiteHelper(context: Context) :
         val divisonB: String
         val longuitudeB: String
         val latitudeB: String
+        val locTimeB: String
 
         if (cursor.moveToFirst()) {
 
@@ -227,8 +273,9 @@ class SQLiteHelper(context: Context) :
             divisonB = cursor.getString(cursor.getColumnIndex(DIVISION))
             longuitudeB = cursor.getString(cursor.getColumnIndex(LONGITUDE))
             latitudeB = cursor.getString(cursor.getColumnIndex(LATITUDE))
+            locTimeB = cursor.getString(cursor.getColumnIndex(LOC_TIME))
 
-            return DtoLocation(macB, placeB, divisonB, longuitudeB, latitudeB)
+            return DtoLocation(macB, placeB, divisonB, longuitudeB, latitudeB,locTimeB)
         }
         return null
     }
@@ -257,6 +304,7 @@ class SQLiteHelper(context: Context) :
         contentValues.put(DIVISION, dto.division)
         contentValues.put(LONGITUDE, dto.longitude)
         contentValues.put(LATITUDE, dto.latitude)
+        contentValues.put(LOC_TIME, dto.loc_time?:"-1")
         val mac = dto.mac
         val success = db.update(TBL_LOCATION, contentValues, "$MAC = '$mac' ", null)
         db.close()

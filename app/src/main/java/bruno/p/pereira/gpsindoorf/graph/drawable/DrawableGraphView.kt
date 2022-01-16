@@ -29,6 +29,7 @@ class DrawableGraphView : View {
     constructor(ctx: Context) : super(ctx)
     constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs)
 
+
     private val touchableSpace: Float = 10f
     private lateinit var actionsManager: ActionsManager
 

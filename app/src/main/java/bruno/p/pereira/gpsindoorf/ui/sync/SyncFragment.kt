@@ -45,11 +45,11 @@ class SyncFragment : Fragment() {
     private val syncViewModel: SyncViewModel by activityViewModels()
     private var _binding: FragmentSyncBinding? = null
     private val binding get() = _binding!!
-    private val bd: SQLiteHelper by lazy {
+    private val db: SQLiteHelper by lazy {
         SQLiteHelper(this.requireContext())
     }
     private val _syncAdapt: SyncAdpter by lazy {
-        SyncAdpter(bd, syncViewModel)
+        SyncAdpter(db, syncViewModel)
     }
 
 

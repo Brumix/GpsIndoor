@@ -18,6 +18,7 @@ type DTOLocation struct {
 	Division  string `json:"division"`
 	Longitude string `json:"longitude"`
 	Latitude  string `json:"latitude"`
+	LocTime   string `json:"loc_time"`
 }
 
 type Beacon struct {
