@@ -93,10 +93,7 @@ class SyncAdpter(private val db: SQLiteHelper, beaconViewModel: SyncViewModel) :
             )
             Navigation.findNavController(holder.itemView)
                 .navigate(R.id.navigation_add_location, bundle)
-
         }
-
-
     }
 
     override fun getItemCount(): Int = this.listBeacons.size

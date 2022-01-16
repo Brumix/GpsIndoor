@@ -8,10 +8,13 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
 import bruno.p.pereira.gpsindoorf.R
+import bruno.p.pereira.gpsindoorf.TAG
+import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.graph.algorithm.Djikstra
 import bruno.p.pereira.gpsindoorf.graph.algorithm.PathFindingAlgorithm
 import bruno.p.pereira.gpsindoorf.graph.data.Edge
@@ -20,6 +23,8 @@ import bruno.p.pereira.gpsindoorf.graph.data.graph.DrawableGraph
 import bruno.p.pereira.gpsindoorf.graph.manager.ActionsManager
 import bruno.p.pereira.gpsindoorf.graph.manager.HistoryAction
 import bruno.p.pereira.gpsindoorf.graph.manager.actions.*
+import bruno.p.pereira.gpsindoorf.models.DtoLocation
+import bruno.p.pereira.gpsindoorf.models.EdgeModel
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -29,6 +34,9 @@ class DrawableGraphView : View {
     constructor(ctx: Context) : super(ctx)
     constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs)
 
+    private val db: SQLiteHelper by lazy {
+        SQLiteHelper(this.context)
+    }
 
     private val touchableSpace: Float = 10f
     private lateinit var actionsManager: ActionsManager
@@ -162,12 +170,31 @@ class DrawableGraphView : View {
 
     private fun setup() {
         isInsit = false
-        val a = DrawableNode("1", width / 2f, height / 2f)
-        val b = DrawableNode("2", width / 3f, height / 3f)
-        addDrawableNode(a)
-        addDrawableNode(b)
-        a.increaseEdgeWeight(b,12.0)
-        addDrawableEdge(a, b)
+        val seenNodes = mutableMapOf<String, DtoLocation>()
+        for (node in this.db.getAllLocations()) {
+            if (seenNodes.containsKey(node.mac)) continue
+            addDrawableNode(
+                DrawableNode(
+                    node.mac,
+                    node.longitude.toFloat(),
+                    node.latitude.toFloat()
+                )
+            )
+            seenNodes[node.mac] = node
+        }
+
+        for (edge in this.db.getAllEdges()) {
+            val nodeA = getDrawableNode(edge.nodeA)
+            val nodeB = getDrawableNode(edge.nodeB)
+            val weigh = edge.weight.toDouble()
+            if (weigh != Edge.DEFAULT_WEIGHT)
+                nodeA.increaseEdgeWeight(nodeB, weigh)
+            addDrawableEdge(nodeA, nodeB)
+        }
+
+
+        //  a.increaseEdgeWeight(b, 12.0)
+        //addDrawableEdge(a, b)
     }
 
     private fun deselectNode() {
@@ -226,13 +253,13 @@ class DrawableGraphView : View {
 
     private fun getMaxIdNodes(): String {
         if (graph.getNodes().isNotEmpty()) {
-           /* var max = graph.getNodes()[0].id
-            for (i in graph.getNodes()) {
-                if (max.toInt() < i.id.toInt()) {
-                    max = i.id
-                }
-            }
-            return max.toInt().plus(1).toString()*/
+            /* var max = graph.getNodes()[0].id
+             for (i in graph.getNodes()) {
+                 if (max.toInt() < i.id.toInt()) {
+                     max = i.id
+                 }
+             }
+             return max.toInt().plus(1).toString()*/
             return graph.maxId.toString()
         }
         return "1"
@@ -248,6 +275,11 @@ class DrawableGraphView : View {
             invalidate()
         }
 
+    }
+
+
+    private fun getDrawableNode(id: String): DrawableNode {
+        return graph.getNode(id)!!
     }
 
     private fun addDrawableNode(drawableNode: DrawableNode) {

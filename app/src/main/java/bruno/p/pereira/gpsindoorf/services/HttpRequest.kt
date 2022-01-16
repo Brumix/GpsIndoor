@@ -81,6 +81,7 @@ class HttpRequest : IntentService("HttpRequest") {
         }
     }
 
+
     private fun handleActionGETUser() {
         val url = "$URL/beacon/user/${Build.ID}"
 
@@ -317,11 +318,12 @@ class HttpRequest : IntentService("HttpRequest") {
         val gson = Gson()
         val info: Array<DtoLocation> =
             gson.fromJson(resp, object : TypeToken<Array<DtoLocation>>() {}.type)
-        Log.v(TAG,resp)
         if(info.isEmpty())
             return
-
+        Log.v(TAG+"t",mac)
+        Log.v(TAG+"t", db.getAllLocations().toString())
         db.deleteLocationByMac(mac)
+        Log.v(TAG+"t", db.getAllLocations().toString())
         for (i in info) {
             i.mac = mac
             db.insertLocation(i)

@@ -20,7 +20,7 @@ var beaconsGeneric = []models.Beacon{
 	{3, "beacon-3", "F9-48-F4-E7-13-4B", -50, models.Location{}, []models.Location{}}}
 
 var master = []models.Master{
-	{"RSR1.201013.001", beaconsGeneric},
+	{"RSR1.201013.001", beaconsGeneric, []models.Edges{}},
 }
 
 var MasterId = len(beaconsGeneric)
@@ -245,6 +245,38 @@ func GETHisLoc(context *gin.Context) {
 	}
 	context.JSON(http.StatusOK, []models.DTOLocation{})
 	return
+}
+
+func GETEdges(context *gin.Context) {
+	var idUser, exist = checkUser(context)
+	if !exist {
+		return
+	}
+
+	for i, m := range master {
+		if m.ID == idUser {
+			context.JSON(http.StatusOK, master[i].Edges)
+			return
+		}
+	}
+	context.JSON(http.StatusOK, []models.Edges{})
+}
+
+func POSTEdges(context *gin.Context) {
+	var idUser, exist = checkUser(context)
+	if !exist {
+		return
+	}
+
+	var edge models.Edges
+	_ = context.ShouldBind(&edge)
+
+	for i, m := range master {
+		if m.ID == idUser {
+			master[i].Edges = append(master[i].Edges, edge)
+		}
+	}
+	context.JSON(http.StatusOK, gin.H{"msg": "edg added with sucess"})
 }
 
 func idUserBeacons(id string) (*[]models.Beacon, bool) {
