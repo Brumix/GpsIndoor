@@ -53,7 +53,7 @@ class AddLocationFragment : Fragment() {
 
             if (division =="" || place=="") return@setOnClickListener
 
-            val dto = DtoLocation(beaconMac, place, division, "0", "0")
+            val dto = DtoLocation(beaconMac, place, division, "-1", "-1")
 
             HttpRequest.startActionPOSTLoc(context!!, dto)
             loc = db.getFirstLocationbyMac(dto.mac)

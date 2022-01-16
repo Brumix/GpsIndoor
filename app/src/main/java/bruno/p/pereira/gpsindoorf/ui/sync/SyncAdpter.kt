@@ -83,8 +83,10 @@ class SyncAdpter(private val db: SQLiteHelper, beaconViewModel: SyncViewModel) :
         if (loc == null) {
             holder.addLocation.setColorFilter(Color.RED)
         } else {
-            if (loc.place.isNotEmpty())
+            if (loc.place.isNotEmpty() && loc.latitude != "-1")
                 holder.addLocation.setColorFilter(Color.rgb(29, 175, 43))
+            else
+                holder.addLocation.setColorFilter(Color.YELLOW)
         }
 
         holder.addLocation.setOnClickListener {

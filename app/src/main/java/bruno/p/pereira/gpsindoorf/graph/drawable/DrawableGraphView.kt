@@ -175,10 +175,10 @@ class DrawableGraphView : View {
         isInsit = false
         val seenNodes = mutableMapOf<String, DtoLocation>()
         for (node in this.db.getAllLocations()) {
-            if (seenNodes.containsKey(node.mac)) continue
+            if (seenNodes.containsKey(node.mac) || node.latitude == "-1") continue
             addDrawableNode(
                 DrawableNode(
-                    node.division.split(" ")[1],
+                    node.division,
                     node.longitude.toFloat(),
                     node.latitude.toFloat(),
                     node.mac
