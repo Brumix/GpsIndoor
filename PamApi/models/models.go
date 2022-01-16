@@ -38,7 +38,14 @@ type DTOBeacon struct {
 	Rssi     int    `json:"rssi"`
 }
 
+type Edges struct {
+	NodeA  string `json:"node_a"`
+	NodeB  string `json:"node_b"`
+	Weight string `json:"weight"`
+}
+
 type Master struct {
 	ID     string
 	Beacon []Beacon
+	Edges  []Edges
 }

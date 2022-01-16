@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import bruno.p.pereira.gpsindoorf.models.Beacon
 import bruno.p.pereira.gpsindoorf.models.DtoLocation
+import bruno.p.pereira.gpsindoorf.models.EdgeModel
 
 
 class SQLiteHelper(context: Context) :
@@ -17,18 +18,28 @@ class SQLiteHelper(context: Context) :
     companion object {
         private const val DATABASE_VERSION = 1
         private const val DATABASE_NAME = "Gpsindoor.db"
+
+        //Table Beacons
         private const val TBL_BEACONS = "beacons"
-        private const val TBL_LOCATION = "location"
         private const val ID = "id"
         private const val NAME = "name"
         private const val MAC = "mac"
         private const val RSSI = "rssi"
-
         private const val PLACE = "place"
+
+
+        //Table Location
+        private const val TBL_LOCATION = "location"
         private const val DIVISION = "division"
         private const val LONGITUDE = "longitude"
         private const val LATITUDE = "latitude"
         private const val LOC_TIME = "loc_time"
+
+        //Table Location
+        private const val TBL_EDGES = "edges"
+        private const val NODEA = "nodeA"
+        private const val NODEB = "nodeB"
+        private const val WEIGHT = "weight"
 
 
     }
@@ -48,11 +59,16 @@ class SQLiteHelper(context: Context) :
                 + LATITUDE + " TEXT, "
                 + LOC_TIME + " TEXT )")
 
+        val createTblEdges = ("CREATE TABLE " + TBL_EDGES + "("
+                + NODEA + " TEXT, "
+                + NODEB + " TEXT, "
+                + WEIGHT + " TEXT )")
 
 
 
         db?.execSQL(createTblBeacons)
         db?.execSQL(createTblLocation)
+        db?.execSQL(createTblEdges)
 
     }
 
@@ -87,13 +103,26 @@ class SQLiteHelper(context: Context) :
         contentValues.put(DIVISION, dto.division)
         contentValues.put(LONGITUDE, dto.longitude)
         contentValues.put(LATITUDE, dto.latitude)
-        contentValues.put(LOC_TIME, dto.loc_time?:"-1")
+        contentValues.put(LOC_TIME, dto.loc_time ?: "-1")
 
 
         val success = db.insert(TBL_LOCATION, null, contentValues)
 
         db.close()
 
+        return success
+    }
+
+    fun insertEdges(edge: EdgeModel): Long {
+        val db = this.writableDatabase
+
+        val contentValues = ContentValues()
+        contentValues.put(NODEA, edge.nodeA)
+        contentValues.put(NODEB, edge.nodeB)
+        contentValues.put(WEIGHT, edge.weight)
+
+        val success = db.insert(TBL_EDGES, null, contentValues)
+        db.close()
         return success
     }
 
@@ -186,7 +215,7 @@ class SQLiteHelper(context: Context) :
         var divisonB: String
         var longuitudeB: String
         var latitudeB: String
-        var loc_timeB : String
+        var loc_timeB: String
 
         if (cursor.moveToFirst()) {
             do {
@@ -197,11 +226,46 @@ class SQLiteHelper(context: Context) :
                 latitudeB = cursor.getString(cursor.getColumnIndex(LATITUDE))
                 loc_timeB = cursor.getString(cursor.getColumnIndex(LOC_TIME))
 
-                val currentDto = DtoLocation(macB, placeB, divisonB, longuitudeB, latitudeB,loc_timeB)
+                val currentDto =
+                    DtoLocation(macB, placeB, divisonB, longuitudeB, latitudeB, loc_timeB)
                 locList.add(currentDto)
             } while (cursor.moveToNext())
         }
         return locList
+    }
+
+
+    @SuppressLint("Range")
+    fun getAllEdges(): ArrayList<EdgeModel> {
+        val edgeList: ArrayList<EdgeModel> = ArrayList()
+        val selectQuery = "SELECT * FROM $TBL_EDGES"
+        val db = this.readableDatabase
+
+        val cursor: Cursor?
+
+        try {
+            cursor = db.rawQuery(selectQuery, null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            db.execSQL(selectQuery)
+            return ArrayList()
+        }
+
+        var nodeA: String
+        var nodeB: String
+        var weight: String
+
+        if (cursor.moveToFirst()) {
+            do {
+                nodeA = cursor.getString(cursor.getColumnIndex(NODEA))
+                nodeB = cursor.getString(cursor.getColumnIndex(NODEB))
+                weight = cursor.getString(cursor.getColumnIndex(WEIGHT))
+
+                val currentEdge = EdgeModel(nodeA , nodeB, weight )
+                edgeList.add(currentEdge)
+            } while (cursor.moveToNext())
+        }
+        return edgeList
     }
 
     @SuppressLint("Range")
@@ -236,7 +300,8 @@ class SQLiteHelper(context: Context) :
                 latitudeB = cursor.getString(cursor.getColumnIndex(LATITUDE))
                 locTimeB = cursor.getString(cursor.getColumnIndex(LOC_TIME))
 
-                val currentDto = DtoLocation(macB, placeB, divisonB, longuitudeB, latitudeB,locTimeB)
+                val currentDto =
+                    DtoLocation(macB, placeB, divisonB, longuitudeB, latitudeB, locTimeB)
                 locList.add(currentDto)
             } while (cursor.moveToNext())
         }
@@ -275,7 +340,7 @@ class SQLiteHelper(context: Context) :
             latitudeB = cursor.getString(cursor.getColumnIndex(LATITUDE))
             locTimeB = cursor.getString(cursor.getColumnIndex(LOC_TIME))
 
-            return DtoLocation(macB, placeB, divisonB, longuitudeB, latitudeB,locTimeB)
+            return DtoLocation(macB, placeB, divisonB, longuitudeB, latitudeB, locTimeB)
         }
         return null
     }
@@ -304,9 +369,21 @@ class SQLiteHelper(context: Context) :
         contentValues.put(DIVISION, dto.division)
         contentValues.put(LONGITUDE, dto.longitude)
         contentValues.put(LATITUDE, dto.latitude)
-        contentValues.put(LOC_TIME, dto.loc_time?:"-1")
+        contentValues.put(LOC_TIME, dto.loc_time ?: "-1")
         val mac = dto.mac
         val success = db.update(TBL_LOCATION, contentValues, "$MAC = '$mac' ", null)
+        db.close()
+        return success
+    }
+
+    fun updateEdge(edge: EdgeModel): Int {
+        val db = this.writableDatabase
+
+        val contentValues = ContentValues()
+        contentValues.put(NODEA, edge.nodeA)
+        contentValues.put(NODEB, edge.nodeB)
+        contentValues.put(WEIGHT,edge.weight)
+        val success = db.update(TBL_EDGES, contentValues, "$NODEA = '${edge.nodeA}' ", null)
         db.close()
         return success
     }
@@ -326,4 +403,13 @@ class SQLiteHelper(context: Context) :
         db.close()
         return success
     }
+
+    fun deleteEdge(nodeA: String): Int {
+        val db = this.writableDatabase
+
+        val success = db.delete(TBL_EDGES, "$NODEA= '$nodeA'", null)
+        db.close()
+        return success
+    }
+
 }

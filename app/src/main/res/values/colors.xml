@@ -7,6 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="found">#1DAF2B</color>
+    <color name="notFound">#FF0000</color>
 
     <color name="colorPrimary">#03A9F4</color>
     <color name="colorPrimaryDark">#1A77C2</color>
@@ -27,15 +29,15 @@
     <color name="colorTextButton">#333333</color>
     <color name="colorPath">#FFC400</color>
     <color name="colorVisited">#FFEBBA</color>
-    <color name="colorStartPoint">#03A9F4</color>
-    <color name="colorEndPoint">#651FFF</color>
+    <color name="colorStartPoint">@color/found</color>
+    <color name="colorEndPoint">@color/notFound</color>
     <color name="colorRemovedCell">#DDDDDD</color>
     <color name="colorRemovedCellX">#CCCCCC</color>
     <color name="colorIncreasedWeightText">#555555</color>
     <color name="colorTableHorizontalLines">#222222</color>
     <color name="colorTableVerticalLines">#222222</color>
 
-    <color name="colorNode">@color/colorAccent</color>
+    <color name="colorNode">@color/purple_500</color>
     <color name="colorNodeText">#FFFFFF</color>
     <color name="colorEdge">#AAAAAA</color>
     <color name="colorTextWeight">#FFFFFF</color>

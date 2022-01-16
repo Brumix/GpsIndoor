@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.view.View
+import androidx.core.content.ContextCompat
 import bruno.p.pereira.gpsindoorf.R
 import bruno.p.pereira.gpsindoorf.graph.data.Node
 import bruno.p.pereira.gpsindoorf.graph.data.graph.DrawableGraph
@@ -15,16 +16,16 @@ class DrawableGraphViewPaint(val context: Context, val paint: Paint) {
     }
 
     // --------- colors ---------
-    private val colorStartNode: Int = androidx.core.content.ContextCompat.getColor(context, R.color.colorStartPoint)
-    private val colorEndNode: Int = androidx.core.content.ContextCompat.getColor(context, R.color.colorEndPoint)
-    private val colorNode: Int = androidx.core.content.ContextCompat.getColor(context, R.color.colorNode)
-    private val colorDrawablePath: Int = androidx.core.content.ContextCompat.getColor(context, R.color.colorDrawablePath)
-    private val colorNodeText: Int = androidx.core.content.ContextCompat.getColor(context, R.color.colorNodeText)
-    private val colorEdge: Int = androidx.core.content.ContextCompat.getColor(context, R.color.colorEdge)
-    private val colorTextWeight: Int = androidx.core.content.ContextCompat.getColor(context, R.color.colorTextWeight)
-    private val colorBoxWeight: Int = androidx.core.content.ContextCompat.getColor(context, R.color.colorBoxWeight)
-    private val colorSelectedNode: Int = androidx.core.content.ContextCompat.getColor(context, R.color.colorSelectedNode)
-    private val colorBoundaries: Int = androidx.core.content.ContextCompat.getColor(context, R.color.colorBoundaries)
+    private val colorStartNode: Int = ContextCompat.getColor(context, R.color.colorStartPoint)
+    private val colorEndNode: Int = ContextCompat.getColor(context, R.color.colorEndPoint)
+    private val colorNode: Int = ContextCompat.getColor(context, R.color.colorNode)
+    private val colorDrawablePath: Int = ContextCompat.getColor(context, R.color.colorDrawablePath)
+    private val colorNodeText: Int = ContextCompat.getColor(context, R.color.black)    //colorNodeText)
+    private val colorEdge: Int = ContextCompat.getColor(context, R.color.colorEdge)
+    private val colorTextWeight: Int = ContextCompat.getColor(context, R.color.colorTextWeight)
+    private val colorBoxWeight: Int = ContextCompat.getColor(context, R.color.colorBoxWeight)
+    private val colorSelectedNode: Int = ContextCompat.getColor(context, R.color.colorSelectedNode)
+    private val colorBoundaries: Int = ContextCompat.getColor(context, R.color.colorBoundaries)
     // --------------------------
 
     fun drawBoundaries(width: Int, height: Int, canvas: Canvas) {
