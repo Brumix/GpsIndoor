@@ -65,8 +65,6 @@ class AddLocationFragment : Fragment() {
                 Log.v(TAG,"[ADDLOCATION] Insert Location")
                 db.insertLocation(dto)
             }
-
-
         }
         return root
     }

@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-var locBeacon0 = models.Location{Place: "Universidade ", Division: "Sala 101", Longitude: "540", Latitude: "540", LocTime: time.Now().Format(models.DateLayout)}
-var locBeacon1 = models.Location{Place: "Universidade", Division: "Sala 102", Longitude: "360", Latitude: "360", LocTime: time.Now().Format(models.DateLayout)}
+var locBeacon0 = models.Location{Place: "Universidade ", Division: "Sala 101", Longitude: "165.98145", Latitude: "847.9131", LocTime: time.Now().Format(models.DateLayout)}
+var locBeacon1 = models.Location{Place: "Universidade", Division: "Sala 102", Longitude: "161.99341", Latitude: "990.90015", LocTime: time.Now().Format(models.DateLayout)}
 
 var beaconsGeneric = []models.Beacon{
 	{Name: "beacon-0", Mac: "54-AX-A2-D4-15-89", Rssi: -50,
@@ -131,6 +131,7 @@ func PostAddLoc(context *gin.Context) {
 
 	var loc models.DTOLocation
 	errDTO := context.ShouldBind(&loc)
+	fmt.Println(loc)
 	if errDTO != nil {
 		fmt.Println(errDTO)
 		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})

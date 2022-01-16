@@ -9,7 +9,7 @@ import bruno.p.pereira.gpsindoorf.R
 import bruno.p.pereira.gpsindoorf.graph.data.Node
 import bruno.p.pereira.gpsindoorf.graph.data.graph.DrawableGraph
 
-class DrawableGraphViewPaint(val context: Context, val paint: Paint) {
+class DrawableGraphViewPaint(val context: Context, private val paint: Paint) {
 
     init {
         configurePaint()
@@ -20,7 +20,7 @@ class DrawableGraphViewPaint(val context: Context, val paint: Paint) {
     private val colorEndNode: Int = ContextCompat.getColor(context, R.color.colorEndPoint)
     private val colorNode: Int = ContextCompat.getColor(context, R.color.colorNode)
     private val colorDrawablePath: Int = ContextCompat.getColor(context, R.color.colorDrawablePath)
-    private val colorNodeText: Int = ContextCompat.getColor(context, R.color.black)    //colorNodeText)
+    private val colorNodeText: Int = ContextCompat.getColor(context, R.color.colorNodeText)
     private val colorEdge: Int = ContextCompat.getColor(context, R.color.colorEdge)
     private val colorTextWeight: Int = ContextCompat.getColor(context, R.color.colorTextWeight)
     private val colorBoxWeight: Int = ContextCompat.getColor(context, R.color.colorBoxWeight)

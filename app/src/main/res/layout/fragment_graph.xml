@@ -10,7 +10,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:onClick="runAlgorithm"
         android:text="Run"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -22,7 +21,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:onClick="redoAlgorithm"
         android:text="Redo"
         app:layout_constraintBottom_toBottomOf="@+id/btRun"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,11 +33,10 @@
         android:id="@+id/btRemove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:onClick="removeNode"
+        android:layout_marginTop="20dp"
         android:text="removeNode"
         app:layout_constraintEnd_toEndOf="@+id/btUndo"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.18"
         app:layout_constraintStart_toStartOf="@+id/btUndo"
         app:layout_constraintTop_toBottomOf="@+id/btUndo" />
 
@@ -48,7 +45,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:onClick="undo"
         android:text="Undo"
         app:layout_constraintBottom_toBottomOf="@+id/btRun"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,18 +53,41 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
+
     <Button
         android:id="@+id/btReset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
-        android:onClick="reset"
         android:text="Reset"
         app:layout_constraintBottom_toBottomOf="@+id/btRemove"
         app:layout_constraintEnd_toEndOf="@+id/btRedo"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/btRedo"
-        app:layout_constraintTop_toBottomOf="@+id/btRedo" />
+        app:layout_constraintTop_toBottomOf="@+id/btRedo"
+        app:layout_constraintVertical_bias="1.0" />
 
+    <Button
+        android:id="@+id/btSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="116dp"
+        android:text="Save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.56"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="172dp"
+        android:text="Add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.885"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <bruno.p.pereira.gpsindoorf.graph.drawable.DrawableGraphView
         android:id="@+id/drawableGraphView"

@@ -9,11 +9,13 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import bruno.p.pereira.gpsindoorf.databinding.ActivityMainBinding
+import bruno.p.pereira.gpsindoorf.models.DtoLocation
 import bruno.p.pereira.gpsindoorf.services.HttpRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 const val TAG = "MYTAG"
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -31,15 +33,27 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_sync, R.id.navigation_database,R.id.navigation_graph, R.id.navigation_info
+                R.id.navigation_sync,
+                R.id.navigation_database,
+                R.id.navigation_graph,
+                R.id.navigation_info
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         val config = AppBarConfiguration(navController.graph)
-        findViewById<Toolbar>(R.id.action_bar).setupWithNavController(navController,config)
-        HttpRequest.startActionGETUser(this)
-      //  TODO("FIXED THE ADD LOCATION")
+        findViewById<Toolbar>(R.id.action_bar).setupWithNavController(navController, config)
+
+        syncInformation()
     }
+
+    private fun syncInformation() {
+        HttpRequest.startActionGETUser(this)
+        HttpRequest.startActionGETBeacons(this)
+        HttpRequest.startActionGETLocation(this)
+    }
+
 }
+
+
