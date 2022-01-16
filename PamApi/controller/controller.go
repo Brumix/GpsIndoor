@@ -131,7 +131,6 @@ func PostAddLoc(context *gin.Context) {
 
 	var loc models.DTOLocation
 	errDTO := context.ShouldBind(&loc)
-	fmt.Println(loc)
 	if errDTO != nil {
 		fmt.Println(errDTO)
 		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})

@@ -72,8 +72,9 @@
 
     <bruno.p.pereira.gpsindoorf.graph.drawable.DrawableGraphView
         android:id="@+id/drawableGraphView"
+        android:background="@drawable/download"
         android:layout_width="match_parent"
-        android:layout_height="820dp"
+        android:layout_height="800dp"
         android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
