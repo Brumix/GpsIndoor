@@ -30,7 +30,6 @@ import bruno.p.pereira.gpsindoorf.services.HttpRequest
 import com.clj.fastble.BleManager
 import com.clj.fastble.callback.BleScanCallback
 import com.clj.fastble.data.BleDevice
-import com.clj.fastble.data.BleScanState
 import java.util.ArrayList
 
 

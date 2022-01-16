@@ -25,6 +25,7 @@ import bruno.p.pereira.gpsindoorf.graph.manager.HistoryAction
 import bruno.p.pereira.gpsindoorf.graph.manager.actions.*
 import bruno.p.pereira.gpsindoorf.models.DtoLocation
 import bruno.p.pereira.gpsindoorf.models.EdgeModel
+import bruno.p.pereira.gpsindoorf.services.HttpRequest
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -142,6 +143,7 @@ class DrawableGraphView : View {
                 if (y > 0 && y < this.height) {
                     val node = selectedNode ?: return false
                     moveNode(node, x, y)
+
                     readyToAddEdges = false
                 }
             }
@@ -154,6 +156,7 @@ class DrawableGraphView : View {
                             Pair(x, y)
                         )
                     )
+                    saveNewLocation(selectedNode!!.mac,x,y)
                     initalMovePosition = Pair(-1f, -1f)
                     movingNode = false
                 }
@@ -175,9 +178,10 @@ class DrawableGraphView : View {
             if (seenNodes.containsKey(node.mac)) continue
             addDrawableNode(
                 DrawableNode(
-                    node.mac,
+                    node.division.split(" ")[1],
                     node.longitude.toFloat(),
-                    node.latitude.toFloat()
+                    node.latitude.toFloat(),
+                    node.mac
                 )
             )
             seenNodes[node.mac] = node
@@ -195,6 +199,16 @@ class DrawableGraphView : View {
 
         //  a.increaseEdgeWeight(b, 12.0)
         //addDrawableEdge(a, b)
+    }
+
+    private fun saveNewLocation(mac:String, x:Float,y:Float){
+        val dto = this.db.getFirstLocationbyMac(mac) ?: return
+        dto.latitude = y.toString()
+        dto.longitude = x.toString()
+        Log.v(TAG, dto.toString())
+        this.db.updateLocation(dto)
+        HttpRequest.startActionPOSTLoc(context,dto)
+        Log.v(TAG,"[DRAWABLEGRAPHVIEW] DTO updated ${dto.mac}")
     }
 
     private fun deselectNode() {

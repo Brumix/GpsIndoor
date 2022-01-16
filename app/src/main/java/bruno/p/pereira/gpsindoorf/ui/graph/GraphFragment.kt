@@ -10,6 +10,7 @@ import bruno.p.pereira.gpsindoorf.R
 import bruno.p.pereira.gpsindoorf.databinding.FragmentGraphBinding
 import bruno.p.pereira.gpsindoorf.graph.drawable.DrawableGraphView
 import bruno.p.pereira.gpsindoorf.graph.manager.ActionsManager
+import bruno.p.pereira.gpsindoorf.services.HttpRequest
 
 
 class GraphFragment : Fragment() {
