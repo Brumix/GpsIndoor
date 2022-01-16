@@ -261,7 +261,7 @@ class SQLiteHelper(context: Context) :
                 nodeB = cursor.getString(cursor.getColumnIndex(NODEB))
                 weight = cursor.getString(cursor.getColumnIndex(WEIGHT))
 
-                val currentEdge = EdgeModel(nodeA , nodeB, weight )
+                val currentEdge = EdgeModel(nodeA, nodeB, weight)
                 edgeList.add(currentEdge)
             } while (cursor.moveToNext())
         }
@@ -382,7 +382,7 @@ class SQLiteHelper(context: Context) :
         val contentValues = ContentValues()
         contentValues.put(NODEA, edge.nodeA)
         contentValues.put(NODEB, edge.nodeB)
-        contentValues.put(WEIGHT,edge.weight)
+        contentValues.put(WEIGHT, edge.weight)
         val success = db.update(TBL_EDGES, contentValues, "$NODEA = '${edge.nodeA}' ", null)
         db.close()
         return success
@@ -408,6 +408,14 @@ class SQLiteHelper(context: Context) :
         val db = this.writableDatabase
 
         val success = db.delete(TBL_EDGES, "$NODEA= '$nodeA'", null)
+        db.close()
+        return success
+    }
+
+    fun deleteALLLocation(): Int {
+        val db = this.writableDatabase
+
+        val success = db.delete(TBL_LOCATION, " 0=0", null)
         db.close()
         return success
     }
