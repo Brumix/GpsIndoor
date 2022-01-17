@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModel
 import bruno.p.pereira.gpsindoorf.R
 import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
@@ -26,6 +27,7 @@ import bruno.p.pereira.gpsindoorf.graph.manager.actions.*
 import bruno.p.pereira.gpsindoorf.models.DtoLocation
 import bruno.p.pereira.gpsindoorf.models.EdgeModel
 import bruno.p.pereira.gpsindoorf.services.HttpRequest
+import bruno.p.pereira.gpsindoorf.ui.sync.SyncViewModel
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -41,6 +43,7 @@ class DrawableGraphView : View {
 
     private val touchableSpace: Float = 10f
     private lateinit var actionsManager: ActionsManager
+    private lateinit var viewModel: SyncViewModel
 
     private val weighBoxes: ArrayList<WeighBox> = ArrayList()
     private var startPoint: DrawableNode? = null
@@ -68,18 +71,14 @@ class DrawableGraphView : View {
 
         if (isInsit)
             setup()
-
-
         paintManager.drawBoundaries(width, height, canvas)
         paintManager.drawEdges(weighBoxes, canvas)
         paintManager.drawNodes(graph.getNodes(), canvas)
         paintManager.drawWeights(weighBoxes, canvas)
-
         if (pathNodesOrder.isNotEmpty()) {
             paintManager.drawPathNodes(graph, pathNodesOrder, canvas)
             paintManager.drawPathEdges(pathNodesOrder, this, canvas)
             paintManager.drawPathWeights(pathNodesOrder, this, canvas)
-
         }
         paintManager.drawStartAndEndPoints(startPoint, endPoint, canvas)
         paintManager.drawTextNodes(graph.getNodes(), canvas)
@@ -192,12 +191,8 @@ class DrawableGraphView : View {
             val nodeA = getDrawableNode(edge.nodeA)
             val nodeB = getDrawableNode(edge.nodeB)
             val weigh = edge.weight.toDouble()
-            nodeA.increaseEdgeWeight(nodeB, weigh)
-            addDrawableEdge(nodeA, nodeB)
+            addDrawableEdge(nodeA, nodeB, weight = weigh)
         }
-
-        //  a.increaseEdgeWeight(b, 12.0)
-        //addDrawableEdge(a, b)
     }
 
     private fun saveNewLocation(mac: String, x: Float, y: Float) {
@@ -330,12 +325,16 @@ class DrawableGraphView : View {
     private fun addDrawableEdge(
         nodeA: DrawableNode,
         nodeB: DrawableNode,
-        history: Boolean = true
+        history: Boolean = true,
+        weight: Double = Edge.DEFAULT_WEIGHT,
     ) {
         if (nodeA.connectedTo.size < graph.getNodes().size - 1) {
+
             weighBoxes.add(WeighBox(weighBoxes.size + 1, nodeA, nodeB))
 
             weighBoxes.last().connectTo(nodeB, paint)
+            if (weight != Edge.DEFAULT_WEIGHT)
+                nodeA.increaseEdgeWeight(nodeB, weight - 1)
             if (history) {
                 actionsManager.addHistory(
                     ActionConnect(
@@ -538,6 +537,10 @@ class DrawableGraphView : View {
 
     fun setActionsManager(actionsManager: ActionsManager) {
         this.actionsManager = actionsManager
+    }
+
+    fun setViewModel(viewModel: SyncViewModel) {
+        this.viewModel = viewModel
     }
 
     // ------------------ Undo / Redo ------------------
