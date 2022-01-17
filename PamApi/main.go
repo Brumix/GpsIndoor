@@ -1,8 +1,8 @@
 package main
 
 import (
+	"PAmAPI/routes"
 	"github.com/gin-gonic/gin"
-	"projects/PAmAPI/routes"
 )
 
 func main() {

@@ -1,29 +1,19 @@
 package controller
 
 import (
+	"PAmAPI/models"
+	"PAmAPI/utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"projects/PAmAPI/models"
 	"time"
 )
 
-var locBeacon0 = models.Location{Place: "Universidade ", Division: "Sala 101", Longitude: "165.98145", Latitude: "847.9131", LocTime: time.Now().Format(models.DateLayout)}
-var locBeacon1 = models.Location{Place: "Universidade", Division: "Sala 102", Longitude: "161.99341", Latitude: "990.90015", LocTime: time.Now().Format(models.DateLayout)}
-
-var beaconsGeneric = []models.Beacon{
-	{Name: "beacon-0", Mac: "54-AX-A2-D4-15-89", Rssi: -50,
-		RecLoc: locBeacon0, HisLoc: []models.Location{locBeacon0}},
-	{Id: 1, Name: "beacon-1", Mac: "34-1C-AF-23-56-B7", Rssi: 12,
-		RecLoc: locBeacon1, HisLoc: []models.Location{locBeacon1}},
-	{2, "beacon-2", "D7-37-5B-87-49-64", -70, models.Location{}, []models.Location{}},
-	{3, "beacon-3", "F9-48-F4-E7-13-4B", -50, models.Location{}, []models.Location{}}}
-
 var master = []models.Master{
-	{"RSR1.201013.001", beaconsGeneric, []models.Edges{}},
+	{"RSR1.201013.001", utils.BeaconsGeneric, utils.EdgesGeneric},
 }
 
-var MasterId = len(beaconsGeneric)
+var MasterId = len(utils.BeaconsGeneric)
 
 func GETCreateUser(context *gin.Context) {
 	var idUser, exist = checkUser(context)
@@ -304,10 +294,46 @@ func POSTEdges(context *gin.Context) {
 
 	for i, m := range master {
 		if m.ID == idUser {
+			for iE := range master[i].Edges {
+				var current = &(master)[i].Edges[iE]
+				if current.NodeA == edge.NodeA && current.NodeB == edge.NodeB {
+					current.Weight = edge.Weight
+					context.JSON(http.StatusOK, gin.H{"msg": "edge updated with success"})
+					return
+				}
+			}
 			master[i].Edges = append(master[i].Edges, edge)
 		}
 	}
-	context.JSON(http.StatusOK, gin.H{"msg": "edg added with sucess"})
+	context.JSON(http.StatusOK, gin.H{"msg": "edge added with success"})
+}
+
+func DELETEEdges(context *gin.Context) {
+	var idUser, exist = checkUser(context)
+	if !exist {
+		return
+	}
+	macA, existmacA := context.Params.Get("macA")
+
+	if !existmacA {
+		for i, m := range master {
+			if m.ID == idUser {
+				var current = &master[i].Edges
+				*current = []models.Edges{}
+				context.JSON(http.StatusOK, gin.H{"msg": "edges deleted with success"})
+				return
+			}
+		}
+	}
+	for i, m := range master {
+		if m.ID == idUser {
+			var current = &master[i].Edges
+			*current = deleteEdge(*current, macA)
+			context.JSON(http.StatusOK, gin.H{"msg": "edge Deleted with success"})
+			return
+		}
+	}
+	context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
 }
 
 func idUserBeacons(id string) (*[]models.Beacon, bool) {
@@ -333,4 +359,15 @@ func reverseDto(input []models.Location) []models.Location {
 		return input
 	}
 	return append(reverseDto(input[1:]), input[0])
+}
+
+func deleteEdge(edges []models.Edges, macA string) []models.Edges {
+	index := 0
+	for _, edge := range edges {
+		if edge.NodeA != macA || edge.NodeB != macA {
+			edges[index] = edge
+			index++
+		}
+	}
+	return edges[:index]
 }

@@ -86,7 +86,6 @@ class DrawableGraphView : View {
         paintManager.drawSelectedNode(selectedNode, canvas)
     }
 
-
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val size = if (measuredWidth > measuredHeight) measuredHeight else measuredWidth
@@ -112,6 +111,7 @@ class DrawableGraphView : View {
 
                     if (selectedNode != nodeB) { //user connect nodes
                         addDrawableEdge(selectedNode!!, nodeB)
+                        storeEdgeInfo(selectedNode!!, nodeB)
                         deselectNode()
                         return true
                     }
@@ -127,6 +127,7 @@ class DrawableGraphView : View {
                     val edge = getEdgeBoxAtPoint(x, y)
                     if (edge != null) {
                         increaseEdgeWeight(edge)
+                        incresasseWeightInfo(edge)
                     } else {
                         addDrawableNode(x, y)
                         readyToAddEdges = false
@@ -156,7 +157,7 @@ class DrawableGraphView : View {
                             Pair(x, y)
                         )
                     )
-                    saveNewLocation(selectedNode!!.mac, x, y)
+                    saveNewLocation(selectedNode!!.id, x, y)
                     initalMovePosition = Pair(-1f, -1f)
                     movingNode = false
                 }
@@ -178,10 +179,10 @@ class DrawableGraphView : View {
             if (seenNodes.containsKey(node.mac) || node.latitude == "-1") continue
             addDrawableNode(
                 DrawableNode(
-                    node.division,
+                    node.mac,
                     node.longitude.toFloat(),
                     node.latitude.toFloat(),
-                    node.mac
+                    node.division
                 )
             )
             seenNodes[node.mac] = node
@@ -191,11 +192,9 @@ class DrawableGraphView : View {
             val nodeA = getDrawableNode(edge.nodeA)
             val nodeB = getDrawableNode(edge.nodeB)
             val weigh = edge.weight.toDouble()
-            if (weigh != Edge.DEFAULT_WEIGHT)
-                nodeA.increaseEdgeWeight(nodeB, weigh)
+            nodeA.increaseEdgeWeight(nodeB, weigh)
             addDrawableEdge(nodeA, nodeB)
         }
-
 
         //  a.increaseEdgeWeight(b, 12.0)
         //addDrawableEdge(a, b)
@@ -303,7 +302,7 @@ class DrawableGraphView : View {
 
     fun removeSelectedNode() {
         val selected = selectedNode ?: return
-        removeNodeInfo(selected.mac)
+        removeNodeInfo(selected.id)
         removeNode(selected)
 
     }
@@ -335,6 +334,7 @@ class DrawableGraphView : View {
     ) {
         if (nodeA.connectedTo.size < graph.getNodes().size - 1) {
             weighBoxes.add(WeighBox(weighBoxes.size + 1, nodeA, nodeB))
+
             weighBoxes.last().connectTo(nodeB, paint)
             if (history) {
                 actionsManager.addHistory(
@@ -644,10 +644,23 @@ class DrawableGraphView : View {
         selectEndPoint(action.node)
     }
 
-    private fun removeNodeInfo(mac:String){
+    private fun removeNodeInfo(mac: String) {
 
         this.db.deleteLocationByMac(mac)
-        HttpRequest.startActionDELETELoc(this.context,mac)
+        HttpRequest.startActionDELETELoc(this.context, mac)
+        this.db.deleteEdge(mac)
+        HttpRequest.startActionDELETEEdge(this.context, mac)
     }
 
+    private fun storeEdgeInfo(nodeA: DrawableNode, nodeB: DrawableNode) {
+        val edge = EdgeModel(nodeA.id, nodeB.id)
+        this.db.insertEdges(edge)
+        HttpRequest.startActionPOSTEdge(this.context, edge)
+    }
+
+    private fun incresasseWeightInfo(edge: WeighBox) {
+        val edgeM = EdgeModel(edge.nodeA.id, edge.nodeB.id, edge.getWeight().toString())
+        this.db.updateEdge(edgeM)
+        HttpRequest.startActionPOSTEdge(this.context, edgeM)
+    }
 }

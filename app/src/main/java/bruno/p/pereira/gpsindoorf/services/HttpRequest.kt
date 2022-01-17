@@ -10,6 +10,7 @@ import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.models.Beacon
 import bruno.p.pereira.gpsindoorf.models.DtoLocation
+import bruno.p.pereira.gpsindoorf.models.EdgeModel
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
@@ -28,6 +29,9 @@ private const val ACTION_POST_BEACONS = "bruno.p.pereira.gpsindoorf.services.act
 private const val ACTION_POST_LOC = "bruno.p.pereira.gpsindoorf.services.action.POST_LOC"
 private const val ACTION_DELETE_LOC = "bruno.p.pereira.gpsindoorf.services.action.DELETE_LOC"
 private const val ACTION_GET_HIST = "bruno.p.pereira.gpsindoorf.services.action.GET_HIST"
+private const val ACTION_GET_EDGE = "bruno.p.pereira.gpsindoorf.services.action.GET_EDGE"
+private const val ACTION_POST_EDGE = "bruno.p.pereira.gpsindoorf.services.action.POST_EDGE"
+private const val ACTION_DELETE_EDGE = "bruno.p.pereira.gpsindoorf.services.action.DELETE_EDGE"
 
 
 // TODO: Rename parameters
@@ -39,6 +43,9 @@ private const val PLACELOC = "bruno.p.pereira.gpsindoorf.services.extra.PLACELOC
 private const val DIVISIONLOC = "bruno.p.pereira.gpsindoorf.services.extra.DIVISIONLOC"
 private const val LONGUITUDELOC = "bruno.p.pereira.gpsindoorf.services.extra.LONGUITUDELOC"
 private const val LATITUDELOC = "bruno.p.pereira.gpsindoorf.services.extra.LATITUDELOC"
+private const val NODEA = "bruno.p.pereira.gpsindoorf.services.extra.NODEA"
+private const val NODEB = "bruno.p.pereira.gpsindoorf.services.extra.NODEB"
+private const val WEIGHT = "bruno.p.pereira.gpsindoorf.services.extra.WEIGHT"
 
 class HttpRequest : IntentService("HttpRequest") {
 
@@ -81,6 +88,17 @@ class HttpRequest : IntentService("HttpRequest") {
             ACTION_GET_HIST -> {
                 val mac = intent.getStringExtra(MACBEACON)!!
                 handleActionGETHist(mac)
+            }
+            ACTION_GET_EDGE -> handleActionGETEdge()
+            ACTION_POST_EDGE -> {
+                val nodeA = intent.getStringExtra(NODEA)!!
+                val nodeB = intent.getStringExtra(NODEB)!!
+                val weight = intent.getStringExtra(WEIGHT)!!
+                handleActionPOSTEdge(EdgeModel(nodeA, nodeB, weight))
+            }
+            ACTION_DELETE_EDGE ->{
+                val nodeA = intent.getStringExtra(NODEA)!!
+                handleActionDELETEEdge(nodeA)
             }
         }
     }
@@ -255,7 +273,7 @@ class HttpRequest : IntentService("HttpRequest") {
     private fun handleActionDELETELoc(mac: String) {
         var url = "$URL/beacon/${Build.ID}/loc"
 
-        if(mac != "")
+        if (mac != "")
             url += "/$mac"
 
         Log.v(TAG, "[URL] $url")
@@ -277,8 +295,86 @@ class HttpRequest : IntentService("HttpRequest") {
         queue.add(request)
     }
 
-    private fun getResponseGETBeacons(resp: String, mac: String) {
+    private fun handleActionGETEdge() {
+        val url = "$URL/beacon/${Build.ID}/edge"
 
+        Log.v(TAG, "[URL] $url")
+        val queue = SingletonVolleyRequestQueue.getInstance(this.applicationContext).requestQueue
+        // Create Request with Listeners:
+        // GET METHOD
+        val request = StringRequest(
+            Request.Method.GET, url,
+            { //Handle Response
+                    respose ->
+                getResponseGETEdges(respose)
+            },
+            { //Handle Error
+                    error ->
+                Toast.makeText(this, "ERROR : ENDPOINT NOT FOUND", Toast.LENGTH_LONG).show()
+                Log.e(TAG, "launchAsyncVolleyHttpRequest(): Response.Listener Error=$error")
+            }
+        )
+        queue.add(request)
+    }
+
+    private fun handleActionPOSTEdge(edge: EdgeModel) {
+
+        val url = "$URL/beacon/${Build.ID}/edge"
+        Log.v(TAG, "[URL] $url")
+
+        val queue = SingletonVolleyRequestQueue.getInstance(this.applicationContext).requestQueue
+        val body = JSONObject()
+        body.accumulate("nodeA", edge.nodeA)
+        body.accumulate("nodeB", edge.nodeB)
+        body.accumulate("weight", edge.weight)
+        // Create Request with Listeners:
+        //  1 listener to handle Response from the provided URL;
+        //  1 listener for error handling.
+        val request = JsonObjectRequest(
+            Request.Method.POST, url, body,
+            { //Handle Response
+                    _ ->
+                Log.v(TAG, "[HTTPREQUEST] Edge added with sucess to the cloud!!")
+
+            },
+            { //Handle Error
+                    error ->
+                Toast.makeText(this, "ERROR : ENDPOINT NOT FOUND", Toast.LENGTH_LONG).show()
+                Log.e(
+                    TAG,
+                    "launchAsyncVolleyHttpRequest(): Response.Listener Error=$error"
+                )
+            })
+
+        queue.add(request)
+    }
+
+    private fun handleActionDELETEEdge(nodeA: String) {
+        var url = "$URL/beacon/${Build.ID}/edge"
+
+        if (nodeA != "" )
+            url += "/$nodeA"
+
+        Log.v(TAG, "[URL] $url")
+        val queue = SingletonVolleyRequestQueue.getInstance(this.applicationContext).requestQueue
+        // Create Request with Listeners:
+        // GET METHOD
+        val request = StringRequest(
+            Request.Method.DELETE, url,
+            { //Handle Response
+                    response ->
+                Log.v(TAG, "[HTTPREQUEST] Loc deleted from cloud !!")
+            },
+            { //Handle Error
+                    error ->
+                Toast.makeText(this, "ERROR : ENDPOINT NOT FOUND", Toast.LENGTH_LONG).show()
+                Log.e(TAG, "launchAsyncVolleyHttpRequest(): Response.Listener Error=$error")
+            }
+        )
+        queue.add(request)
+    }
+
+    private fun getResponseGETBeacons(resp: String, mac: String) {
         val gson = Gson()
         val listBeacons: MutableList<Beacon> = this.db.getAllBeacons()
         val mapDB = mutableMapOf<String, Beacon>()
@@ -328,7 +424,6 @@ class HttpRequest : IntentService("HttpRequest") {
             val info: Array<DtoLocation> =
                 gson.fromJson(resp, object : TypeToken<Array<DtoLocation>>() {}.type)
 
-            Log.v(TAG, "${info.size}")
             for (i in info) {
                 if (mapDB.containsKey(i.mac)) {
                     db.updateLocation(i)
@@ -352,6 +447,31 @@ class HttpRequest : IntentService("HttpRequest") {
         for (i in info) {
             i.mac = mac
             db.insertLocation(i)
+        }
+    }
+
+    private fun getResponseGETEdges(resp: String) {
+
+
+        val gson = Gson()
+        val listEdges: MutableList<EdgeModel> = this.db.getAllEdges()
+        val mapDB = mutableMapOf<String, EdgeModel>()
+        for (i in listEdges)
+            mapDB[i.nodeA + i.nodeB] = i
+
+
+        val info: Array<EdgeModel> =
+            gson.fromJson(resp, object : TypeToken<Array<EdgeModel>>() {}.type)
+
+        for (i in info) {
+            if (mapDB.containsKey(i.nodeA + i.nodeB)) {
+                db.updateEdge(i)
+                Log.v(TAG, "[HTTPREQUEST] EDGE UPDATED $i")
+            } else {
+                db.insertEdges(i)
+                Log.v(TAG, "[HTTPREQUEST] EDGE ADDED $i")
+            }
+
         }
     }
 
@@ -429,5 +549,32 @@ class HttpRequest : IntentService("HttpRequest") {
             context.startService(intent)
         }
 
+        @JvmStatic
+        fun startActionGETEdge(context: Context) {
+            val intent = Intent(context, HttpRequest::class.java).apply {
+                action = ACTION_GET_EDGE
+            }
+            context.startService(intent)
+        }
+
+        @JvmStatic
+        fun startActionPOSTEdge(context: Context, edgeModel: EdgeModel) {
+            val intent = Intent(context, HttpRequest::class.java).apply {
+                action = ACTION_POST_EDGE
+                putExtra(NODEA, edgeModel.nodeA)
+                putExtra(NODEB, edgeModel.nodeB)
+                putExtra(WEIGHT, edgeModel.weight)
+            }
+            context.startService(intent)
+        }
+
+        @JvmStatic
+        fun startActionDELETEEdge(context: Context, nodeA: String = "") {
+            val intent = Intent(context, HttpRequest::class.java).apply {
+                action = ACTION_DELETE_EDGE
+                putExtra(NODEA, nodeA)
+            }
+            context.startService(intent)
+        }
     }
 }

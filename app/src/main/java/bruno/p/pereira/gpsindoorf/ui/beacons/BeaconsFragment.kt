@@ -57,6 +57,7 @@ class BeaconsFragment : Fragment() {
 
             HttpRequest.startActionGETBeacons(this.requireContext())
             HttpRequest.startActionGETLocation(this.requireContext())
+            HttpRequest.startActionGETEdge(this.requireContext())
 
 
             sync.animate().apply {

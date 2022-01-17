@@ -1,8 +1,8 @@
 package routes
 
 import (
+	"PAmAPI/controller"
 	"github.com/gin-gonic/gin"
-	"projects/PAmAPI/controller"
 )
 
 func Routes(router *gin.Engine) {
@@ -22,4 +22,7 @@ func Routes(router *gin.Engine) {
 
 	router.GET("/beacon/:id/edge", controller.GETEdges)
 	router.POST("/beacon/:id/edge", controller.POSTEdges)
+	router.DELETE("/beacon/:id/edge", controller.DELETEEdges)
+	router.DELETE("/beacon/:id/edge/:macA", controller.DELETEEdges)
+
 }

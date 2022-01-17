@@ -6,8 +6,10 @@ import bruno.p.pereira.gpsindoorf.graph.data.Edge
 import bruno.p.pereira.gpsindoorf.graph.data.Edge.Companion.DEFAULT_WEIGHT
 
 
-class WeighBox (val id: Int, val nodeA: DrawableNode,
-                val nodeB: DrawableNode) {
+class WeighBox(
+    val id: Int, val nodeA: DrawableNode,
+    val nodeB: DrawableNode
+) {
 
 
     val boundaries: RectF = RectF(0f, 0f, 0f, 0f)
@@ -26,9 +28,11 @@ class WeighBox (val id: Int, val nodeA: DrawableNode,
         val textCenterX = (nodeA.centerX + nodeB.centerX) / 2
         val textCenterY = (nodeA.centerY + nodeB.centerY) / 2
 
-        boundaries.left = textCenterX - (paint.measureText(edge.weight.toInt().toString()) / 2) - spacing
+        boundaries.left =
+            textCenterX - (paint.measureText(edge.weight.toInt().toString()) / 2) - spacing
         boundaries.top = textCenterY - (paint.descent() + paint.ascent())
-        boundaries.right = textCenterX + (paint.measureText(edge.weight.toInt().toString()) / 2) + spacing
+        boundaries.right =
+            textCenterX + (paint.measureText(edge.weight.toInt().toString()) / 2) + spacing
         boundaries.bottom = textCenterY + (paint.descent() + paint.ascent())
 
         touchableArea.left = textCenterX - spacing
@@ -42,16 +46,16 @@ class WeighBox (val id: Int, val nodeA: DrawableNode,
         edge.weight += amount
     }
 
+    fun getWeight(): Double = edge?.weight ?: DEFAULT_WEIGHT
+
     fun decreaseWeight(amount: Double) {
         val edge = this.edge ?: return
         edge.weight -= amount
     }
 
 
+    companion object {
 
-
-    companion object{
-
-        val NEGATIVEWEIGHT:Double = -1.0
+        val NEGATIVEWEIGHT: Double = -1.0
     }
 }

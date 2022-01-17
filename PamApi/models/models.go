@@ -39,8 +39,8 @@ type DTOBeacon struct {
 }
 
 type Edges struct {
-	NodeA  string `json:"node_a"`
-	NodeB  string `json:"node_b"`
+	NodeA  string `json:"nodeA"`
+	NodeB  string `json:"nodeB"`
 	Weight string `json:"weight"`
 }
 

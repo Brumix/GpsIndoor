@@ -1,7 +1,6 @@
 package bruno.p.pereira.gpsindoorf
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.findNavController
@@ -9,7 +8,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import bruno.p.pereira.gpsindoorf.databinding.ActivityMainBinding
-import bruno.p.pereira.gpsindoorf.models.DtoLocation
 import bruno.p.pereira.gpsindoorf.services.HttpRequest
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -52,6 +50,7 @@ class MainActivity : AppCompatActivity() {
         HttpRequest.startActionGETUser(this)
         HttpRequest.startActionGETBeacons(this)
         HttpRequest.startActionGETLocation(this)
+        HttpRequest.startActionGETEdge(this)
     }
 
 }
