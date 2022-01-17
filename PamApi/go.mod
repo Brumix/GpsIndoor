@@ -1,4 +1,4 @@
-module projects/PAmAPI
+module PAmAPI
 
 go 1.17
 

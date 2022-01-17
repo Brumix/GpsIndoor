@@ -86,8 +86,8 @@ class DrawableGraphViewPaint(val context: Context, private val paint: Paint) {
 
     private fun drawTextNode(node: DrawableNode, canvas: Canvas) {
         canvas.drawText(
-            node.id,
-            node.centerX - paint.measureText(node.id) / 2,
+            node.text,
+            node.centerX - paint.measureText(node.text) / 2,
             node.centerY - ((paint.descent() + paint.ascent()) / 2), paint
         )
     }

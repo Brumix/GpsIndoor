@@ -6,7 +6,7 @@ import bruno.p.pereira.gpsindoorf.graph.data.Node
 import java.time.temporal.TemporalAmount
 
 
-class DrawableNode (val id: String, var centerX: Float, var centerY: Float, val mac:String = "MAC"):
+class DrawableNode (val id: String, var centerX: Float, var centerY: Float, val text:String = "SALA -1"):
     Node(id) {
 
     var rect: RectF
