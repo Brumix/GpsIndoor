@@ -8,17 +8,22 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import bruno.p.pereira.gpsindoorf.R
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.databinding.FragmentGraphBinding
 import bruno.p.pereira.gpsindoorf.graph.drawable.DrawableGraphView
 import bruno.p.pereira.gpsindoorf.graph.manager.ActionsManager
 import bruno.p.pereira.gpsindoorf.services.HttpRequest
+import bruno.p.pereira.gpsindoorf.ui.sync.SyncViewModel
+import com.clj.fastble.BleManager
+import com.clj.fastble.data.BleScanState
 
 
 class GraphFragment : Fragment() {
 
     private val actionsManager = ActionsManager()
+    private val viewModel: SyncViewModel by activityViewModels()
     private val drawView: DrawableGraphView by lazy {
         binding.drawableGraphView
     }
@@ -30,6 +35,8 @@ class GraphFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (BleManager.getInstance().scanSate == BleScanState.STATE_SCANNING)
+            BleManager.getInstance().cancelScan()
 
     }
 
@@ -42,6 +49,8 @@ class GraphFragment : Fragment() {
 
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
         drawView.setActionsManager(actionsManager)
+        drawView.setViewModel(viewModel)
+
 
         binding.apply {
             btRun.setOnClickListener { drawView.runAlgorithm() }
