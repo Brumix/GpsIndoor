@@ -1,14 +1,11 @@
 package bruno.p.pereira.gpsindoorf.ui.graph
 
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListAdapter
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -19,7 +16,6 @@ import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.databinding.FragmentGraphBinding
 import bruno.p.pereira.gpsindoorf.graph.drawable.DrawableGraphView
 import bruno.p.pereira.gpsindoorf.graph.manager.ActionsManager
-import bruno.p.pereira.gpsindoorf.models.DtoLocation
 import bruno.p.pereira.gpsindoorf.services.HttpRequest
 import bruno.p.pereira.gpsindoorf.ui.sync.SyncViewModel
 import com.clj.fastble.BleManager
@@ -76,7 +72,9 @@ class GraphFragment : Fragment() {
         builder.setPositiveButton(getString(R.string.yes)) { _, _ ->
             drawView.reset()
             this.db.deleteALLLocation()
+            this.db.deleteAllEdges()
             HttpRequest.startActionDELETELoc(this.requireContext())
+            HttpRequest.startActionDELETEEdge(this.requireContext())
 
         }
         builder.setNeutralButton(getString(R.string.cancel)) { _, _ -> }

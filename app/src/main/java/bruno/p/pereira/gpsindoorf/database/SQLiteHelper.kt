@@ -412,6 +412,14 @@ class SQLiteHelper(context: Context) :
         return success
     }
 
+    fun deleteAllEdges(): Int {
+        val db = this.writableDatabase
+
+        val success = db.delete(TBL_EDGES, " 0=0", null)
+        db.close()
+        return success
+    }
+
     fun deleteALLLocation(): Int {
         val db = this.writableDatabase
 

@@ -19,7 +19,7 @@ import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 
 
-private const val URL = "https://d7b6-188-250-33-145.ngrok.io"
+private const val URL = "https://6c68-188-250-33-145.ngrok.io"
 
 
 private const val ACTION_GET_USER = "bruno.p.pereira.gpsindoorf.services.action.GET_USER"
@@ -363,7 +363,7 @@ class HttpRequest : IntentService("HttpRequest") {
             Request.Method.DELETE, url,
             { //Handle Response
                     response ->
-                Log.v(TAG, "[HTTPREQUEST] Loc deleted from cloud !!")
+                Log.v(TAG, "[HTTPREQUEST] EGDES deleted from cloud !!")
             },
             { //Handle Error
                     error ->

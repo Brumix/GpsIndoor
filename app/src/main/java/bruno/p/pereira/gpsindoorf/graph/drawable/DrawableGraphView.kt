@@ -284,7 +284,6 @@ class DrawableGraphView : View {
 
     }
 
-
     private fun getDrawableNode(id: String): DrawableNode {
         return graph.getNode(id)!!
     }
