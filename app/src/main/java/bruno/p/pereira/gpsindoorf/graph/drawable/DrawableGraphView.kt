@@ -199,7 +199,6 @@ class DrawableGraphView : View {
         val dto = this.db.getFirstLocationbyMac(mac) ?: return
         dto.latitude = y.toString()
         dto.longitude = x.toString()
-        Log.v(TAG, dto.toString())
         this.db.updateLocation(dto)
         HttpRequest.startActionPOSTLoc(context, dto)
         Log.v(TAG, "[DRAWABLEGRAPHVIEW] DTO updated ${dto.mac}")

@@ -19,7 +19,7 @@ import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 
 
-private const val URL = "https://c34f-188-250-33-145.ngrok.io"
+private const val URL = "https://d7b6-188-250-33-145.ngrok.io"
 
 
 private const val ACTION_GET_USER = "bruno.p.pereira.gpsindoorf.services.action.GET_USER"

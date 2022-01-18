@@ -91,7 +91,7 @@
 
     <bruno.p.pereira.gpsindoorf.graph.drawable.DrawableGraphView
         android:id="@+id/drawableGraphView"
-        android:background="@drawable/download"
+        android:background="@drawable/backgroud_graph"
         android:layout_width="match_parent"
         android:layout_height="800dp"
         android:layout_marginBottom="60dp"

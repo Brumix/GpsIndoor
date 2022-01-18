@@ -3,9 +3,7 @@ package bruno.p.pereira.gpsindoorf.ui.sync
 import android.Manifest
 import android.app.AlertDialog
 import android.bluetooth.BluetoothManager
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Build
@@ -30,6 +28,7 @@ import bruno.p.pereira.gpsindoorf.services.HttpRequest
 import com.clj.fastble.BleManager
 import com.clj.fastble.callback.BleScanCallback
 import com.clj.fastble.data.BleDevice
+import com.clj.fastble.data.BleScanState
 import java.util.ArrayList
 
 
@@ -59,8 +58,8 @@ class SyncFragment : Fragment() {
             .enableLog(true)
             .setReConnectCount(1, 5000)
             .setConnectOverTime(20000).operateTimeout = 5000
-
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -98,7 +97,8 @@ class SyncFragment : Fragment() {
 
 
     private fun checkPermissions() {
-
+        if (BleManager.getInstance().scanSate == BleScanState.STATE_SCANNING)
+            BleManager.getInstance().cancelScan()
         val bluetoothManager =
             context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         val bluetoothAdapter = bluetoothManager.adapter
@@ -182,6 +182,12 @@ class SyncFragment : Fragment() {
             override fun onScanFinished(scanResultList: List<BleDevice>) {
                 Log.v(TAG, "[SCANNER]: $STOP_SCAN")
                 binding.btScan.text = START_SCAN
+                // to made sync every minute
+               /* binding.root.postDelayed({
+                    if (BleManager.getInstance().scanSate == BleScanState.STATE_SCANNING)
+                        BleManager.getInstance().cancelScan()
+                    startScan()
+                }, 1 * 60 * 1000)*/
             }
         })
     }
@@ -192,10 +198,11 @@ class SyncFragment : Fragment() {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
-    private fun managementBeacon(beacon: Beacon){
+    private fun managementBeacon(beacon: Beacon) {
         syncViewModel.addBeacons(beacon)
         Log.v(TAG, "[VIEWMODEL]: ${syncViewModel.getBeacons().size}")
         _syncAdapt.notifyChanges(beacon)
-        HttpRequest.startActionPOSTBeacons(this.requireContext(),beacon)
+        HttpRequest.startActionPOSTBeacons(this.requireContext(), beacon)
     }
+
 }

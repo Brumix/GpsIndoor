@@ -1,19 +1,25 @@
 package bruno.p.pereira.gpsindoorf.ui.graph
 
 
+import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.Navigation
 import bruno.p.pereira.gpsindoorf.R
+import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.databinding.FragmentGraphBinding
 import bruno.p.pereira.gpsindoorf.graph.drawable.DrawableGraphView
 import bruno.p.pereira.gpsindoorf.graph.manager.ActionsManager
+import bruno.p.pereira.gpsindoorf.models.DtoLocation
 import bruno.p.pereira.gpsindoorf.services.HttpRequest
 import bruno.p.pereira.gpsindoorf.ui.sync.SyncViewModel
 import com.clj.fastble.BleManager
@@ -78,19 +84,38 @@ class GraphFragment : Fragment() {
     }
 
     private fun selectNewNode() {
-        val allBeacons = this.db.getAllBeacons()
-        val items = arrayListOf<String>()
-        for (node in allBeacons) {
-            items.add(node.mac)
-        }
-        val builder = AlertDialog.Builder(this@GraphFragment.requireContext())
-        builder.setTitle("ADD NODE")
-        builder.setItems(R.array.popup_array){_, index ->
-            Toast.makeText(this@GraphFragment.requireContext(), index.toString(), Toast.LENGTH_SHORT).show()
-        }
+        val allBeacons = this.db.getAllLocations()
+        var beaconsTitles: Array<String> = arrayOf()
+        var macbeacons: Array<String> = arrayOf()
+        for (i in allBeacons)
+            if (i.latitude == "-1") {
+                beaconsTitles = beaconsTitles.plus(i.division)
+                macbeacons = macbeacons.plus(i.mac)
+            }
 
-        builder.create().show()
+        if (beaconsTitles.isNotEmpty()) {
+            AlertDialog.Builder(this.requireContext()).apply {
+                setTitle("Beacons to Add")
+                setItems(beaconsTitles) { _, which ->
+                    Log.v(TAG, beaconsTitles[which])
+                    val dto = db.getFirstLocationbyMac(macbeacons[which])!!
+                    dto.longitude = "540"
+                    dto.latitude = "540"
+                    db.updateLocation(dto)
+                    Log.v(TAG, "[GRAPHFRAGMENT] Beacon added to the graph")
+                    Navigation.findNavController(binding.root).navigate(R.id.navigation_graph)
+                }
+                show()
+            }
+        } else {
+            AlertDialog.Builder(this.requireContext()).apply {
+                setTitle("Beacons to Add")
+                setMessage("You don`t have any Beacon to add")
+                show()
+            }
+        }
     }
+
 
 }
 

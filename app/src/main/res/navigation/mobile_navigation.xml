@@ -24,7 +24,7 @@
     <fragment
         android:id="@+id/navigation_details"
         android:name="bruno.p.pereira.gpsindoorf.ui.details.DetailFragment"
-        android:label="fragment_detail"
+        android:label="Details"
         tools:layout="@layout/fragment_detail" />
     <fragment
         android:id="@+id/navigation_add_location"
