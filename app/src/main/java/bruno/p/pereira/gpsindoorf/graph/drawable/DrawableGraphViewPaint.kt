@@ -26,6 +26,7 @@ class DrawableGraphViewPaint(val context: Context, private val paint: Paint) {
     private val colorBoxWeight: Int = ContextCompat.getColor(context, R.color.colorBoxWeight)
     private val colorSelectedNode: Int = ContextCompat.getColor(context, R.color.colorSelectedNode)
     private val colorBoundaries: Int = ContextCompat.getColor(context, R.color.colorBoundaries)
+    private val colorClosestNode: Int = ContextCompat.getColor(context, R.color.colorClosestNode)
     // --------------------------
 
     fun drawBoundaries(width: Int, height: Int, canvas: Canvas) {
@@ -44,7 +45,10 @@ class DrawableGraphViewPaint(val context: Context, private val paint: Paint) {
     }
 
     private fun drawNode(node: DrawableNode, canvas: Canvas) {
+        if (DrawableGraphView.closestNode != null && node.id == DrawableGraphView.closestNode!!.id)
+            paint.color = colorClosestNode
         canvas.drawCircle(node.centerX, node.centerY, DrawableNode.RADIUS, paint)
+        paint.color = colorNode
     }
 
     fun drawSelectedNode(selectedNode: DrawableNode?, canvas: Canvas) {

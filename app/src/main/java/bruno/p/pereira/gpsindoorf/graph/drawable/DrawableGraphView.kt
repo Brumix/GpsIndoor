@@ -37,6 +37,8 @@ class DrawableGraphView : View {
     constructor(ctx: Context) : super(ctx)
     constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs)
 
+    data class CloseData(val mac: String, val rssi: Int)
+
     private val db: SQLiteHelper by lazy {
         SQLiteHelper(this.context)
     }
@@ -173,17 +175,32 @@ class DrawableGraphView : View {
 
     private fun setup() {
         isInsit = false
+
+
+        var closest: CloseData? = null
+        for (i in viewModel.getBeacons()) {
+            if (closest == null)
+                closest = CloseData(i.mac, i.rssi)
+            else {
+                if (i.rssi > closest.rssi)
+                    closest = CloseData(i.mac, i.rssi)
+            }
+        }
+
+        Log.v(TAG, "[DRAWABLEGRAPHVIEW] Closest Data = $closest")
         val seenNodes = mutableMapOf<String, DtoLocation>()
         for (node in this.db.getAllLocations()) {
             if (seenNodes.containsKey(node.mac) || node.latitude == "-1") continue
-            addDrawableNode(
-                DrawableNode(
-                    node.mac,
-                    node.longitude.toFloat(),
-                    node.latitude.toFloat(),
-                    node.division
-                )
+            val draw = DrawableNode(
+                node.mac,
+                node.longitude.toFloat(),
+                node.latitude.toFloat(),
+                node.division
             )
+            if (closest != null && draw.id == closest.mac)
+                closestNode = draw
+            addDrawableNode(draw)
+
             seenNodes[node.mac] = node
         }
 
@@ -214,7 +231,7 @@ class DrawableGraphView : View {
         pathNodesOrder.clear()
 
         val nodes = graph.getNodes() as LinkedList<Node>
-        val nodeA = startPoint as Node
+        val nodeA = if ( startPoint==null && closestNode != null) closestNode as Node else startPoint as Node
         val nodeB = endPoint as Node
         algorithm = Djikstra(nodes, nodeA, nodeB)
 
@@ -230,7 +247,7 @@ class DrawableGraphView : View {
     }
 
     fun isReadyToRun(): Boolean {
-        return (startPoint != null && endPoint != null)
+        return (startPoint != null && endPoint != null || closestNode != null && endPoint != null)
     }
 
     private fun increaseEdgeWeight(weighBox: WeighBox, history: Boolean = true) {
@@ -376,7 +393,8 @@ class DrawableGraphView : View {
             return
         }
 
-        if (startPoint == null) {
+        if (startPoint == null && closestNode== null || startPoint == null && endPoint != null) {
+            if (closestNode != null && node == closestNode) return
             selectStartPoint(node)
             actionsManager.addHistory(
                 ActionStartPoint(
@@ -384,6 +402,7 @@ class DrawableGraphView : View {
                 )
             )
         } else if (endPoint == null) {
+            if (closestNode != null && node == closestNode) return
             selectEndPoint(node)
             actionsManager.addHistory(
                 ActionEndPoint(
@@ -416,7 +435,7 @@ class DrawableGraphView : View {
 
     private fun deselectEndPoint() {
         endPoint = null
-        if (startPoint != null) {
+        if (startPoint != null || closestNode != null) {
 
             pathNodesOrder.clear()
         }
@@ -519,7 +538,6 @@ class DrawableGraphView : View {
 
         return stringPath.toString()
     }
-
 
     fun reset() {
         graph = DrawableGraph()
@@ -663,5 +681,10 @@ class DrawableGraphView : View {
         val edgeM = EdgeModel(edge.nodeA.id, edge.nodeB.id, edge.getWeight().toString())
         this.db.updateEdge(edgeM)
         HttpRequest.startActionPOSTEdge(this.context, edgeM)
+    }
+
+
+    companion object {
+        var closestNode: DrawableNode? = null
     }
 }
