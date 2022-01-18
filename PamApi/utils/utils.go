@@ -5,14 +5,14 @@ import (
 	"time"
 )
 
-var locBeacon0 = models.Location{Place: "Universidade ", Division: "Sala 101", Longitude: "165.98145", Latitude: "990.90015", LocTime: time.Now().Format(models.DateLayout)}
+var locBeacon0 = models.Location{Place: "Universidade", Division: "Sala 101", Longitude: "165.98145", Latitude: "990.90015", LocTime: time.Now().Format(models.DateLayout)}
 var locBeacon1 = models.Location{Place: "Universidade", Division: "Sala 102", Longitude: "165.98145", Latitude: "710.9099", LocTime: time.Now().Format(models.DateLayout)}
-var locBeacon2 = models.Location{Place: "Universidade ", Division: "Sala 105", Longitude: "165.98145", Latitude: "431.8938", LocTime: time.Now().Format(models.DateLayout)}
-var locBeacon3 = models.Location{Place: "Universidade ", Division: "Sala 106", Longitude: "135.98877", Latitude: "114.95654", LocTime: time.Now().Format(models.DateLayout)}
-var locBeacon4 = models.Location{Place: "Universidade ", Division: "Sala 108", Longitude: "616.9592", Latitude: "114.95654", LocTime: time.Now().Format(models.DateLayout)}
-var locBeacon5 = models.Location{Place: "Universidade ", Division: "Sala 110", Longitude: "953.96484", Latitude: "114.95654", LocTime: time.Now().Format(models.DateLayout)}
-var locBeacon6 = models.Location{Place: "Universidade ", Division: "Sala 112", Longitude: "924.96094", Latitude: "413.94214", LocTime: time.Now().Format(models.DateLayout)}
-var locBeacon7 = models.Location{Place: "Universidade ", Division: "Sala 114", Longitude: "924.96094", Latitude: "717.9375", LocTime: time.Now().Format(models.DateLayout)}
+var locBeacon2 = models.Location{Place: "Universidade", Division: "Sala 105", Longitude: "165.98145", Latitude: "431.8938", LocTime: time.Now().Format(models.DateLayout)}
+var locBeacon3 = models.Location{Place: "Universidade", Division: "Sala 106", Longitude: "135.98877", Latitude: "114.95654", LocTime: time.Now().Format(models.DateLayout)}
+var locBeacon4 = models.Location{Place: "Universidade", Division: "Sala 108", Longitude: "616.9592", Latitude: "114.95654", LocTime: time.Now().Format(models.DateLayout)}
+var locBeacon5 = models.Location{Place: "Universidade", Division: "Sala 110", Longitude: "953.96484", Latitude: "114.95654", LocTime: time.Now().Format(models.DateLayout)}
+var locBeacon6 = models.Location{Place: "Universidade", Division: "Sala 112", Longitude: "924.96094", Latitude: "413.94214", LocTime: time.Now().Format(models.DateLayout)}
+var locBeacon7 = models.Location{Place: "Universidade", Division: "Sala 114", Longitude: "924.96094", Latitude: "717.9375", LocTime: time.Now().Format(models.DateLayout)}
 
 var BeaconsGeneric = []models.Beacon{
 	{Name: "beacon-0", Mac: "54-AX-A2-D4-15-89", Rssi: -50,
