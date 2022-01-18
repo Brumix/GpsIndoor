@@ -30,8 +30,6 @@ class AddLocationFragment : Fragment() {
         arguments?.let {
             this.beaconMac = it.getString("mac")!!
         }
-
-
     }
 
     override fun onCreateView(
