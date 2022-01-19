@@ -25,7 +25,6 @@ class BeaconsAdpter(private val db: SQLiteHelper) :
     RecyclerView.Adapter<BeaconsAdpter.ViewHolder>() {
 
 
-    // TODO made this to live data or find a way to make this persistent
     private var listBeacons: MutableList<Beacon> = this.db.getAllBeacons()
 
 

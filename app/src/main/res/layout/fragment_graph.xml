@@ -1,104 +1,96 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btRun"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="Run"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginStart="10dp"
+        android:onClick="runAlgorithm"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/btReset"
+        app:layout_constraintTop_toTopOf="@+id/btReset"
+        app:srcCompat="@drawable/ic_run" />
 
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btRedo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="Redo"
-        app:layout_constraintBottom_toBottomOf="@+id/btRun"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.885"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        android:layout_marginStart="10dp"
+        android:onClick="redoAlgorithm"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/btRemove"
+        app:layout_constraintTop_toTopOf="@+id/btRemove"
+        app:srcCompat="@drawable/ic_redo" />
 
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btRemove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="removeNode"
-        app:layout_constraintEnd_toEndOf="@+id/btUndo"
-        app:layout_constraintHorizontal_bias="0.18"
-        app:layout_constraintStart_toStartOf="@+id/btUndo"
-        app:layout_constraintTop_toBottomOf="@+id/btUndo" />
+        android:layout_marginStart="10dp"
+        android:onClick="removeNode"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/btUndo"
+        app:layout_constraintTop_toTopOf="@+id/btUndo"
+        app:srcCompat="@drawable/ic_delete_forever" />
 
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btUndo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="Undo"
-        app:layout_constraintBottom_toBottomOf="@+id/btRun"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.098"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        android:layout_marginStart="10dp"
+        android:onClick="undo"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/floatingActionButton"
+        app:layout_constraintTop_toTopOf="@+id/floatingActionButton"
+        app:srcCompat="@drawable/ic_undo" />
 
-
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btReset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
-        android:text="Reset"
-        app:layout_constraintBottom_toBottomOf="@+id/btRemove"
-        app:layout_constraintEnd_toEndOf="@+id/btRedo"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/btRedo"
-        app:layout_constraintTop_toBottomOf="@+id/btRedo"
-        app:layout_constraintVertical_bias="1.0" />
+        android:layout_marginStart="10dp"
+        android:onClick="reset"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/btRedo"
+        app:layout_constraintTop_toTopOf="@+id/btRedo"
+        app:srcCompat="@drawable/ic_reset" />
 
-    <Button
-        android:id="@+id/btSave"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="116dp"
-        android:text="Save"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.56"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="172dp"
-        android:text="Add"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.885"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="10dp"
+        android:onClick="Add"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/floatingActionButton"
+        app:layout_constraintTop_toBottomOf="@+id/floatingActionButton"
+        app:srcCompat="@drawable/ic_add" />
 
     <bruno.p.pereira.gpsindoorf.graph.drawable.DrawableGraphView
         android:id="@+id/drawableGraphView"
-        android:background="@drawable/backgroud_graph"
         android:layout_width="match_parent"
         android:layout_height="800dp"
         android:layout_marginBottom="60dp"
+        android:background="@drawable/backgroud_graph"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
-
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:backgroundTint="@color/purple_500"
+        android:clickable="true"
+        android:focusable="true"
+        android:tint="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_add_24" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -312,6 +312,10 @@ class DrawableGraphView : View {
 
     fun removeSelectedNode() {
         val selected = selectedNode ?: return
+        HttpRequest.startActionDELETEEdge(this.context,selected.id)
+        HttpRequest.startActionDELETELoc(this.context,selected.id)
+        this.db.deleteEdge(selected.id)
+        this.db.deleteLocationByMac(selected.id)
         removeNodeInfo(selected.id)
         removeNode(selected)
 
