@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<Toolbar>(R.id.action_bar).setupWithNavController(navController, config)
 
         syncInformation()
+        TODO("resolve error delete and reboot")
     }
 
     private fun syncInformation() {

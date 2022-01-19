@@ -32,6 +32,7 @@
     <string name="confirm_delete">Are you sure you want to delete the graph?</string>
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
+    <string name="scan">Scan</string>
 
 
 </resources>
