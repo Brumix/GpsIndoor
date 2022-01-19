@@ -40,11 +40,10 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        val config = AppBarConfiguration(navController.graph)
-        findViewById<Toolbar>(R.id.action_bar).setupWithNavController(navController, config)
+       val config = AppBarConfiguration(navController.graph)
+       findViewById<Toolbar>(R.id.action_bar).setupWithNavController(navController, config)
 
         syncInformation()
-        TODO("resolve error delete and reboot")
     }
 
     private fun syncInformation() {

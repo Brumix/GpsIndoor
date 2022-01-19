@@ -32,7 +32,7 @@ var BeaconsGeneric = []models.Beacon{
 	{7, "beacon-7", "B2-10-J3-M1-10-5X", -77,
 		locBeacon7, []models.Location{locBeacon7}}}
 
-var EdgesGeneric = []models.Edges{{NodeA: "54-AX-A2-D4-15-89", NodeB: "34-1C-AF-23-56-B7", Weight: "10"},
+var EdgesGeneric = []models.Edges{
 	{NodeA: "54-AX-A2-D4-15-89", NodeB: "34-1C-AF-23-56-B7", Weight: "10"},
 	{NodeA: "34-1C-AF-23-56-B7", NodeB: "D7-37-5B-87-49-64", Weight: "20"},
 	{NodeA: "D7-37-5B-87-49-64", NodeB: "D2-23-C4-N7-15-4N", Weight: "14"},

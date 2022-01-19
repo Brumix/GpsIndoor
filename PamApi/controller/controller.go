@@ -364,7 +364,7 @@ func reverseDto(input []models.Location) []models.Location {
 func deleteEdge(edges []models.Edges, macA string) []models.Edges {
 	index := 0
 	for _, edge := range edges {
-		if edge.NodeA != macA || edge.NodeB != macA {
+		if edge.NodeA != macA && edge.NodeB != macA {
 			edges[index] = edge
 			index++
 		}
