@@ -7,6 +7,8 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
+import bruno.p.pereira.gpsindoorf.TAG
 import bruno.p.pereira.gpsindoorf.models.Beacon
 import bruno.p.pereira.gpsindoorf.models.DtoLocation
 import bruno.p.pereira.gpsindoorf.models.EdgeModel
@@ -407,7 +409,9 @@ class SQLiteHelper(context: Context) :
     fun deleteEdge(nodeA: String): Int {
         val db = this.writableDatabase
 
-        val success = db.delete(TBL_EDGES, "$NODEA= '$nodeA'", null)
+        var success = db.delete(TBL_EDGES, "$NODEA= '$nodeA'", null)
+        if (success == 0)
+            success = db.delete(TBL_EDGES, "$NODEB= '$nodeA'", null)
         db.close()
         return success
     }

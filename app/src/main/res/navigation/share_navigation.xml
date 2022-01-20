@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/share_navigation"
+    android:label="Qr Code"
+    app:startDestination="@id/qrCodeFragment">
+
+    <fragment
+        android:id="@+id/qrCodeFragment"
+        android:name="bruno.p.pereira.gpsindoorf.ui.share.QrCodeFragment"
+        android:label="fragment_qr_code">
+        <action
+            android:id="@+id/nav_Scanner_from_qrCode"
+            app:destination="@id/qrScannerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/qrScannerFragment"
+        android:name="bruno.p.pereira.gpsindoorf.ui.share.QrScannerFragment"
+        android:label="QR Scanner">
+        <action
+            android:id="@+id/nav_qrCode_from_scanner"
+            app:destination="@id/qrCodeFragment" />
+    </fragment>
+</navigation>

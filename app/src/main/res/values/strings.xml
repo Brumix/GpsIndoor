@@ -33,6 +33,8 @@
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
     <string name="scan">Scan</string>
+    <string name="tittle_share">Share</string>
+    <string name="place_holder_qr_code">QR CODE</string>
 
 
 </resources>

@@ -11,6 +11,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import bruno.p.pereira.gpsindoorf.R
@@ -46,16 +47,17 @@ class DrawableGraphView : View {
     private val touchableSpace: Float = 10f
     private lateinit var actionsManager: ActionsManager
     private lateinit var viewModel: SyncViewModel
+    private lateinit var tvDivision: TextView
+    private lateinit var tvMac: TextView
 
     private val weighBoxes: ArrayList<WeighBox> = ArrayList()
     private var startPoint: DrawableNode? = null
     private var endPoint: DrawableNode? = null
-    private var selectedNode: DrawableNode? = null
     private var readyToAddEdges: Boolean = false
     private var readyToAddStartAndEndNodes: Boolean = false
     private var readyToRunAgain: Boolean = false
     private var isInsit: Boolean = true
-
+    private var selectedNode: DrawableNode? = null
     private var movingNode: Boolean = false
     private var initalMovePosition = Pair(-1f, -1f)
 
@@ -102,6 +104,9 @@ class DrawableGraphView : View {
             MotionEvent.ACTION_DOWN -> {
                 if (selectedNode == null) {
                     selectedNode = getDrawableNodeAtPoint(x, y)
+                    if (selectedNode != null)
+                        drawText(selectedNode!!.id, selectedNode!!.text)
+
                 } else {
                     val nodeB = getDrawableNodeAtPoint(x, y)
 
@@ -130,7 +135,7 @@ class DrawableGraphView : View {
                         increaseEdgeWeight(edge)
                         incresasseWeightInfo(edge)
                     } else {
-                        addDrawableNode(x, y)
+                       // addDrawableNode(x, y)
                         readyToAddEdges = false
                     }
                 } else {
@@ -223,6 +228,7 @@ class DrawableGraphView : View {
 
     private fun deselectNode() {
         selectedNode = null
+        resetText()
     }
 
     fun runAlgorithm() {
@@ -231,7 +237,8 @@ class DrawableGraphView : View {
         pathNodesOrder.clear()
 
         val nodes = graph.getNodes() as LinkedList<Node>
-        val nodeA = if ( startPoint==null && closestNode != null) closestNode as Node else startPoint as Node
+        val nodeA =
+            if (startPoint == null && closestNode != null) closestNode as Node else startPoint as Node
         val nodeB = endPoint as Node
         algorithm = Djikstra(nodes, nodeA, nodeB)
 
@@ -296,6 +303,8 @@ class DrawableGraphView : View {
             graph.addNode(node)
             actionsManager.addHistory(ActionAdd(node))
             selectedNode = node
+            if (selectedNode != null)
+                drawText(selectedNode!!.id, selectedNode!!.text)
             invalidate()
         }
 
@@ -312,8 +321,8 @@ class DrawableGraphView : View {
 
     fun removeSelectedNode() {
         val selected = selectedNode ?: return
-        HttpRequest.startActionDELETEEdge(this.context,selected.id)
-        HttpRequest.startActionDELETELoc(this.context,selected.id)
+        HttpRequest.startActionDELETEEdge(this.context, selected.id)
+        HttpRequest.startActionDELETELoc(this.context, selected.id)
         this.db.deleteEdge(selected.id)
         this.db.deleteLocationByMac(selected.id)
         removeNodeInfo(selected.id)
@@ -397,7 +406,7 @@ class DrawableGraphView : View {
             return
         }
 
-        if (startPoint == null && closestNode== null || startPoint == null && endPoint != null) {
+        if (startPoint == null && closestNode == null || startPoint == null && endPoint != null) {
             if (closestNode != null && node == closestNode) return
             selectStartPoint(node)
             actionsManager.addHistory(
@@ -547,7 +556,7 @@ class DrawableGraphView : View {
         graph = DrawableGraph()
         startPoint = null
         endPoint = null
-        selectedNode = null
+        deselectNode()
         weighBoxes.clear()
         pathNodesOrder.clear()
         actionsManager.clearHistory()
@@ -555,13 +564,18 @@ class DrawableGraphView : View {
 
     }
 
-    fun setActionsManager(actionsManager: ActionsManager) {
+    fun setResources(
+        actionsManager: ActionsManager,
+        viewModel: SyncViewModel,
+        tvDivision: TextView,
+        tvmac: TextView
+    ) {
         this.actionsManager = actionsManager
+        this.viewModel = viewModel
+        this.tvDivision = tvDivision
+        this.tvMac = tvmac
     }
 
-    fun setViewModel(viewModel: SyncViewModel) {
-        this.viewModel = viewModel
-    }
 
     // ------------------ Undo / Redo ------------------
 
@@ -687,8 +701,20 @@ class DrawableGraphView : View {
         HttpRequest.startActionPOSTEdge(this.context, edgeM)
     }
 
+    private fun drawText(mac: String, division: String) {
+        this.tvDivision.text = division
+        this.tvMac.text = mac
+    }
+
+    private fun resetText() {
+        this.tvDivision.text = "DIVISION"
+        this.tvMac.text = "MAC"
+    }
+
 
     companion object {
         var closestNode: DrawableNode? = null
+
+
     }
 }

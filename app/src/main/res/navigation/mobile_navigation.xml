@@ -36,4 +36,9 @@
         android:name="bruno.p.pereira.gpsindoorf.ui.graph.GraphFragment"
         android:label="Graph"
         tools:layout="@layout/fragment_graph" />
+    <fragment
+        android:id="@+id/navigation_share"
+        android:name="bruno.p.pereira.gpsindoorf.ui.share.ShareFragment"
+        android:label="fragment_share"
+        tools:layout="@layout/fragment_share" />
 </navigation>
