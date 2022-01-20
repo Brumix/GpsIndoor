@@ -25,4 +25,6 @@ func Routes(router *gin.Engine) {
 	router.DELETE("/beacon/:id/edge", controller.DELETEEdges)
 	router.DELETE("/beacon/:id/edge/:macA", controller.DELETEEdges)
 
+	router.GET("/sync/:id/:otherId", controller.GETSync)
+
 }

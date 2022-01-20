@@ -34,17 +34,19 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_sync,
                 R.id.navigation_database,
                 R.id.navigation_graph,
-                R.id.navigation_info
+                R.id.navigation_info,
+                R.id.navigation_share
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-       val config = AppBarConfiguration(navController.graph)
-       findViewById<Toolbar>(R.id.action_bar).setupWithNavController(navController, config)
+        val config = AppBarConfiguration(navController.graph)
+        findViewById<Toolbar>(R.id.action_bar).setupWithNavController(navController, config)
 
         syncInformation()
     }
+
 
     private fun syncInformation() {
         HttpRequest.startActionGETUser(this)
@@ -52,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         HttpRequest.startActionGETLocation(this)
         HttpRequest.startActionGETEdge(this)
     }
+
 
 }
 

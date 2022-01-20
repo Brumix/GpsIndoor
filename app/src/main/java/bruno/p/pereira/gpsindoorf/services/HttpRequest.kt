@@ -19,7 +19,7 @@ import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 
 
-private const val URL = "https://1ac6-188-250-33-145.ngrok.io"
+private const val URL = "https://ff83-188-250-33-145.ngrok.io"
 
 
 private const val ACTION_GET_USER = "bruno.p.pereira.gpsindoorf.services.action.GET_USER"
@@ -32,6 +32,7 @@ private const val ACTION_GET_HIST = "bruno.p.pereira.gpsindoorf.services.action.
 private const val ACTION_GET_EDGE = "bruno.p.pereira.gpsindoorf.services.action.GET_EDGE"
 private const val ACTION_POST_EDGE = "bruno.p.pereira.gpsindoorf.services.action.POST_EDGE"
 private const val ACTION_DELETE_EDGE = "bruno.p.pereira.gpsindoorf.services.action.DELETE_EDGE"
+private const val ACTION_SYNC = "bruno.p.pereira.gpsindoorf.services.action.SYNC"
 
 
 // TODO: Rename parameters
@@ -46,6 +47,7 @@ private const val LATITUDELOC = "bruno.p.pereira.gpsindoorf.services.extra.LATIT
 private const val NODEA = "bruno.p.pereira.gpsindoorf.services.extra.NODEA"
 private const val NODEB = "bruno.p.pereira.gpsindoorf.services.extra.NODEB"
 private const val WEIGHT = "bruno.p.pereira.gpsindoorf.services.extra.WEIGHT"
+private const val OTHERID = "bruno.p.pereira.gpsindoorf.services.extra.OTHERID"
 
 class HttpRequest : IntentService("HttpRequest") {
 
@@ -96,9 +98,13 @@ class HttpRequest : IntentService("HttpRequest") {
                 val weight = intent.getStringExtra(WEIGHT)!!
                 handleActionPOSTEdge(EdgeModel(nodeA, nodeB, weight))
             }
-            ACTION_DELETE_EDGE ->{
+            ACTION_DELETE_EDGE -> {
                 val nodeA = intent.getStringExtra(NODEA)!!
                 handleActionDELETEEdge(nodeA)
+            }
+            ACTION_SYNC -> {
+                val otherId = intent.getStringExtra(OTHERID)!!
+                handleActionGETSync(otherId)
             }
         }
     }
@@ -352,7 +358,7 @@ class HttpRequest : IntentService("HttpRequest") {
     private fun handleActionDELETEEdge(nodeA: String) {
         var url = "$URL/beacon/${Build.ID}/edge"
 
-        if (nodeA != "" )
+        if (nodeA != "")
             url += "/$nodeA"
 
         Log.v(TAG, "[URL] $url")
@@ -364,6 +370,29 @@ class HttpRequest : IntentService("HttpRequest") {
             { //Handle Response
                     response ->
                 Log.v(TAG, "[HTTPREQUEST] EGDES deleted from cloud !!")
+            },
+            { //Handle Error
+                    error ->
+                Toast.makeText(this, "ERROR : ENDPOINT NOT FOUND", Toast.LENGTH_LONG).show()
+                Log.e(TAG, "launchAsyncVolleyHttpRequest(): Response.Listener Error=$error")
+            }
+        )
+        queue.add(request)
+    }
+
+    private fun handleActionGETSync(otherId: String) {
+        val url = "$URL/sync/${Build.ID}/$otherId"
+
+        Log.v(TAG, "[URL] $url")
+        val queue = SingletonVolleyRequestQueue.getInstance(this.applicationContext).requestQueue
+        // Create Request with Listeners:
+        // GET METHOD
+        val request = StringRequest(
+            Request.Method.GET, url,
+            { //Handle Response
+                    _ ->
+                Log.v(TAG, "[HTTPREQUEST] User Added to the system")
+                Toast.makeText(this, "SYNC complete !", Toast.LENGTH_LONG).show()
             },
             { //Handle Error
                     error ->
@@ -573,6 +602,15 @@ class HttpRequest : IntentService("HttpRequest") {
             val intent = Intent(context, HttpRequest::class.java).apply {
                 action = ACTION_DELETE_EDGE
                 putExtra(NODEA, nodeA)
+            }
+            context.startService(intent)
+        }
+
+        @JvmStatic
+        fun startActionGETSync(context: Context,otherId: String) {
+            val intent = Intent(context, HttpRequest::class.java).apply {
+                action = ACTION_SYNC
+                putExtra(OTHERID, otherId)
             }
             context.startService(intent)
         }

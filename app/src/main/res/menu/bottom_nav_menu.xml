@@ -22,4 +22,10 @@
         android:icon="@drawable/ic_baseline_perm_device_information_24"
         android:title="@string/title_info" />
 
+    <item
+        android:id="@+id/navigation_share"
+        android:icon="@drawable/ic_baseline_qr_code_scanner_24"
+        android:title="@string/tittle_share" />
+
+
 </menu>

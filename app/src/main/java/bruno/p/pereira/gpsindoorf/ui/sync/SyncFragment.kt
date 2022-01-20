@@ -25,6 +25,7 @@ import bruno.p.pereira.gpsindoorf.database.SQLiteHelper
 import bruno.p.pereira.gpsindoorf.databinding.FragmentSyncBinding
 import bruno.p.pereira.gpsindoorf.models.Beacon
 import bruno.p.pereira.gpsindoorf.services.HttpRequest
+import bruno.p.pereira.gpsindoorf.ui.share.CAMERA_PERMITIONS
 import com.clj.fastble.BleManager
 import com.clj.fastble.callback.BleScanCallback
 import com.clj.fastble.data.BleDevice
@@ -53,6 +54,7 @@ class SyncFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         BleManager.getInstance().init(requireActivity().application)
         BleManager.getInstance()
             .enableLog(true)
@@ -97,8 +99,7 @@ class SyncFragment : Fragment() {
 
 
     private fun checkPermissions() {
-        if (BleManager.getInstance().scanSate == BleScanState.STATE_SCANNING)
-            BleManager.getInstance().cancelScan()
+
         val bluetoothManager =
             context?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         val bluetoothAdapter = bluetoothManager.adapter
@@ -183,11 +184,11 @@ class SyncFragment : Fragment() {
                 Log.v(TAG, "[SCANNER]: $STOP_SCAN")
                 binding.btScan.text = START_SCAN
                 // to made sync every minute
-               /* binding.root.postDelayed({
-                    if (BleManager.getInstance().scanSate == BleScanState.STATE_SCANNING)
-                        BleManager.getInstance().cancelScan()
-                    startScan()
-                }, 1 * 60 * 1000)*/
+                /* binding.root.postDelayed({
+                     if (BleManager.getInstance().scanSate == BleScanState.STATE_SCANNING)
+                         BleManager.getInstance().cancelScan()
+                     startScan()
+                 }, 1 * 60 * 1000)*/
             }
         })
     }

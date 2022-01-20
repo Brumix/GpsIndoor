@@ -25,7 +25,7 @@ func GETCreateUser(context *gin.Context) {
 		return
 	}
 	master = append(master, models.Master{
-		ID: idUser, Beacon: []models.Beacon{},
+		ID: idUser, Beacon: []models.Beacon{}, Edges: []models.Edges{},
 	})
 }
 
@@ -104,7 +104,7 @@ func PostAddBeacon(context *gin.Context) {
 	bodyBeacon.Id = MasterId
 	MasterId++
 	*result = append(*result, bodyBeacon)
-	context.JSON(http.StatusBadRequest, gin.H{"msg": "Added with success!!"})
+	context.JSON(http.StatusOK, gin.H{"msg": "Added with success!!"})
 }
 
 func PostAddLoc(context *gin.Context) {
@@ -276,6 +276,10 @@ func GETEdges(context *gin.Context) {
 
 	for i, m := range master {
 		if m.ID == idUser {
+			if master[i].Edges == nil {
+				context.JSON(http.StatusOK, []models.Edges{})
+				return
+			}
 			context.JSON(http.StatusOK, master[i].Edges)
 			return
 		}
@@ -336,6 +340,37 @@ func DELETEEdges(context *gin.Context) {
 	context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
 }
 
+func GETSync(context *gin.Context) {
+	var idUser, exist = checkUser(context)
+	if !exist {
+		return
+	}
+	otherId, existOtherId := context.Params.Get("otherId")
+	if !existOtherId {
+		context.JSON(http.StatusBadRequest, gin.H{"msg": "Invalid id"})
+		return
+	}
+
+	for i := range master {
+		if master[i].ID == idUser {
+			beacons := copyBeacons(otherId)
+			edges := copyEdges(otherId)
+			if beacons != nil {
+				for j := range beacons {
+					master[i].Beacon = append(master[i].Beacon, beacons[j])
+				}
+			}
+			if edges != nil {
+				for j := range edges {
+					master[i].Edges = append(master[i].Edges, edges[j])
+				}
+			}
+			break
+		}
+	}
+	context.JSON(http.StatusOK, gin.H{"msg": "Sync completed"})
+}
+
 func idUserBeacons(id string) (*[]models.Beacon, bool) {
 	for i, m := range master {
 		if m.ID == id {
@@ -370,4 +405,22 @@ func deleteEdge(edges []models.Edges, macA string) []models.Edges {
 		}
 	}
 	return edges[:index]
+}
+
+func copyBeacons(id string) []models.Beacon {
+	for i := range master {
+		if master[i].ID == id {
+			return master[i].Beacon
+		}
+	}
+	return nil
+}
+
+func copyEdges(id string) []models.Edges {
+	for i := range master {
+		if master[i].ID == id {
+			return master[i].Edges
+		}
+	}
+	return nil
 }
