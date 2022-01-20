@@ -90,6 +90,9 @@ class SyncAdpter(private val db: SQLiteHelper, beaconViewModel: SyncViewModel) :
         }
 
         holder.addLocation.setOnClickListener {
+            if (BleManager.getInstance().scanSate == BleScanState.STATE_SCANNING)
+                BleManager.getInstance().cancelScan()
+
             val bundle = bundleOf(
                 "mac" to currentBeacon.mac
             )
