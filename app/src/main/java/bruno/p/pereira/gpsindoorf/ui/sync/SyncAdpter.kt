@@ -29,7 +29,7 @@ class SyncAdpter(private val db: SQLiteHelper, beaconViewModel: SyncViewModel) :
 
     fun notifyChanges(beacon: Beacon?) {
         if (beacon == null) {
-            idGlobal = 0;
+            idGlobal = 0
             notifyDataSetChanged()
         } else {
             if (db.getFirstBeaconbyMac(beacon.mac) == null) {
