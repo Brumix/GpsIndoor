@@ -14,9 +14,11 @@ var locBeacon5 = models.Location{Place: "Universidade", Division: "Sala 110", Lo
 var locBeacon6 = models.Location{Place: "Universidade", Division: "Sala 112", Longitude: "924.96094", Latitude: "413.94214", LocTime: time.Now().Format(models.DateLayout)}
 var locBeacon7 = models.Location{Place: "Universidade", Division: "Sala 114", Longitude: "924.96094", Latitude: "717.9375", LocTime: time.Now().Format(models.DateLayout)}
 
+var locHistBeacon = models.Location{Place: "Universidade", Division: "Sala 101", Longitude: "165.98145", Latitude: "990.90015", LocTime: "2022-Jan-02 Monday 12:04:05"}
+
 var BeaconsGeneric = []models.Beacon{
 	{Name: "beacon-0", Mac: "54-AX-A2-D4-15-89", Rssi: -50,
-		RecLoc: locBeacon0, HisLoc: []models.Location{locBeacon0}},
+		RecLoc: locBeacon0, HisLoc: []models.Location{locBeacon0, locHistBeacon}},
 	{Id: 1, Name: "beacon-1", Mac: "34-1C-AF-23-56-B7", Rssi: 12,
 		RecLoc: locBeacon1, HisLoc: []models.Location{locBeacon1}},
 	{2, "beacon-2", "D7-37-5B-87-49-64", -70,
